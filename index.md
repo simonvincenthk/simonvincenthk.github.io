@@ -1,4 +1,4 @@
-![Image of fast.ai logo](images/logo.png)
+![Image of sivihk logo](sivihk_black_retina.png)
 
 # sivihk Research Blog
 
