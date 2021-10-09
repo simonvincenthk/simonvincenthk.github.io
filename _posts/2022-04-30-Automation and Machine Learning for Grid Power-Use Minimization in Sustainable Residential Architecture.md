@@ -12,7 +12,7 @@ For ease in navigating the ramineder of this article, a table of contense:
 
 {:toc}
 
-## Introduction
+## 1. Introduction
 
 This is a (purely) theoretical efficacy study about achieving greater energy savings in sustainable residential architecture by applying automation and machine learning in a unique way. 
 
@@ -43,56 +43,56 @@ Lastly, several data points are studied analytically, and results are compared t
 “Automation”
 “Machine Learning”
 
-## Literature Review
+## 2. Literature Review
 
 Text
 
-### Previous Work on this Topic
+### 2.1 Previous Work on this Topic
 
 Text
 
-### Why Automation is (or isn’t) Appropriate
+### 2.2 Why Automation is (or isn’t) Appropriate
 
 Text
 
-### Why Machine Learning is (or isn’t) Appropriate
+### 2.3 Why Machine Learning is (or isn’t) Appropriate
 
 Howard and Gugger, in their 2020 publication Deep Learning for Coders with fastai & PyTorch, outline several inherent limitations of machine learning. Paraphrased, the relevant points are,
 
 
-## Method
+## 3. Method
 
 Text
 
-### Defining (a) Thermal Model(s)
+### 3.1 Defining (a) Thermal Model(s)
 
 Text
 
-### Defining a Control System
+### 3.2 Defining a Control System
 
 Text
 
-### Building a Neural Network
+### 3.3 Building a Neural Network
 
 Text
 
-### Training the Neural Network
+### 3.4 Training the Neural Network
 
 According to Howard and Gugger, “the single most important and challenging issue when training for all… algorithms” is overfitting.
 
-### Validating the “Predictions”
+### 3.5 Validating the “Predictions”
 
 Text
 
-## Results
+## 4. Results
 
 Text
 
-## Discussion
+## 5. Discussion
 
 Text
 
-## Summary and Conclusions
+## 6. Summary and Conclusions
 
 Text
 
