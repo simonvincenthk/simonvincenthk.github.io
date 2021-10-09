@@ -16,10 +16,8 @@ For ease in navigating the ramineder of this article, a table of contense:
 
 This is a (purely) theoretical efficacy study about achieving greater energy savings in sustainable residential architecture by applying automation and machine learning in a unique way. 
 
---
-
 An industry is emerging in smart home design, and, although perhaps not conventional, one has existed in sustainable living solutions for a long time. While many engineers work on the problems surrounding energy storage, adressing energy consumpion can yield results that are just as impactful.
---
+
 
 ![Image of passive solar home](images/Passive Solar Home.jpg)
 
