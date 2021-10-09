@@ -66,7 +66,40 @@ Text
 
 ### 3.1 Defining (a) Thermal Model(s)
 
-Text
+Hysterically, both experimental-apparatus’ and computer-driven simulations have been used for the validation of scientific theses, particularly in the field of engineering. In conversation, Evans, a building-energy researcher and instructor at the University of Victoria, explained that data has been a stumbling block in the building-energy research field. Often, data sets are available, but not enough information about where that came from is available to make it useful for all applications. Moreover, machine learning is inherently heavily data-dependent. In certain applications, like thermo- and fluid-dynamics more data can be obtained from computer-driven simulations than analogous experimental apparatus’ because of the absence of spatial sensor constraints. Hence, a computer-driven simulation model is used for this study. 
+
+For the purposes of this study, the process of defining an appropriate first thermal model is one of simplifying a real-world scenario, while preserving all essential aspects. To do this, all critical parameters and dependencies are reviewed, and simplifying assumptions are applied to a real-world scenario:
+
+Again, the objective of the final machine-learning model is to minimize the power introduced to a sustainable residential building through automated control of the windows and blinds while remaining within an error range around the user’s setpoint. 
+
+All heat transfer into and out of the building has an influence on temperature regardless if by conduction, convection, or radiation. Convection is controlled by how open or closed the windows are. Radiation is controlled by how open or closed the blinds are. And the HVAC makes up for changes toward the user’s setpoint that cannot be achieved otherwise. 
+
+Because of these dependencies, understanding what happens to all of these parameters when something inside the building is changed is critical:
+
+- Constraints
+  - temperature (user setpoint)
+- Control (Independant) Parameters
+  - % closed (window 1)
+  - % blinded (window 1)
+  - % closed (window 2)
+  - % blinded (window 2) 
+- Dependant Parameters
+  - temperature (inside at the elevation of window 1)
+  - temperature rate of change (inside at the elevation of window 1)
+  - temperature (inside at the elevation of window 2)
+  - temperature rate of change (inside at the elevation of window 2)
+- Invariable Parameters
+  - temperature (outside)
+  - temperature rate of change (outside)
+  - sun angle
+  - sun intensity
+- Parameter to be Minimizes
+  - heat gain (due to the H-VAC system)
+ 
+In the introduction of this article, a passively-solar-heated home was discussed. This residential building is quite complex, and considering all thermal behaviour would go far beyond requirements of a first model, which are simply to understand the influence of windows and blind on temperature within the building. For this reason, aspects such as thermal loads, an auxiliary solar water-heating system, internal geometry (eg. furniture), and humidity are ignored. Leftover is the fundamental geometry, an HVAC system, and set of windows and blinds. This can be simplified further to a “shoe-box” model consisting of just a two-story box with an HVAC system and windows on the first and second floors. Even with this, the impact of windows and blinds on internal temperature can be studied effectively.
+ 
+Evans suggests using Energy Plus, a nodal building-energy simulator for constructing a computer-driven simulation.
+
 
 ### 3.2 Defining a Control System
 
