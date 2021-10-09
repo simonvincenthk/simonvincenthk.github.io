@@ -136,8 +136,9 @@ My honors thesis supervisors,
 - Dr. Yang Shi.
 
 Other researchers who helped me significantly, 
-- Dr. Ralph Evins, and
-- Dr. Khosro Lari
+- Dr. Ralph Evins,
+- Dr. Khosro Lari, and
+- Joel Grieco.
 
 
 
