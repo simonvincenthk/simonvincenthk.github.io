@@ -1,74 +1,110 @@
 # Automation and Machine Learning for Grid Power-Use Minimization in Sustainable Residential Architecture
 
-Here's the table of contents:
 
-1. TOC
+
+## Abstract
+
+Text
+
+## Table of Contense 
+
+For ease in navigating the ramineder of this article, a table of contense:
+
 {:toc}
 
-## Basic setup
+## Introduction
 
-Jekyll requires blog post files to be named according to the following format:
+This is a (purely) theoretical efficacy study about achieving greater energy savings in sustainable residential architecture by applying automation and machine learning in a unique way. 
 
-`YEAR-MONTH-DAY-filename.md`
+--
 
-Where `YEAR` is a four-digit number, `MONTH` and `DAY` are both two-digit numbers, and `filename` is whatever file name you choose, to remind yourself what this post is about. `.md` is the file extension for markdown files.
+Today…
 
-The first line of the file should start with a single hash character, then a space, then your title. This is how you create a "*level 1 heading*" in markdown. Then you can create level 2, 3, etc headings as you wish but repeating the hash character, such as you see in the line `## File names` above.
+--
 
-## Basic formatting
+Consider a passive solar home. A homesteader designed it with an 80 by 7 foot south-facing wall of windows to allow solar radiation to pass into the home. Desirable amounts of heating and cooling are achieved by manually opening and closing blinds and windows. The process is repetitive and labor-intensive, which makes it an excellent candidate for automation. 
 
-You can use *italics*, **bold**, `code font text`, and create [links](https://www.markdownguide.org/cheat-sheet/). Here's a footnote [^1]. Here's a horizontal rule:
+Deciding when to, and how much to, open the blinds and windows is not trivial. A great deal of experience, or knowledge about thermal behaviour is needed to make the right decision. This decision making process would be addressed well using one of two of today’s common engineering methods—(1) machine learning, or (2) a traditional analytical heat-transfer model.
 
----
+Achieving higher efficiencies in homes that are already designed to save energy may be possible or even generally applicable. It is the objective of this study to form a conclusion about whether this can be accomplished using an automation and machine learning approach.
 
-## Lists
+--
 
-Here's a list:
+In this paper,
+- a theoretical thermal FEA model is created to simulate sustainable residential architecture,
+- a control system is devised as a substitute for real-world automation of blinds, and windows, and 
+- a machine learning algorithm is built and implemented to make experience-based control decisions about how to achieve the user's setpoint while mitigating grid power use.
 
-- item 1
-- item 2
+Lastly, several data points are studied analytically, and results are compared to vailate the success of the machine learning algorithm.
 
-And a numbered list:
+“Sustainable Residential Architecture”
+“Automation”
+“Machine Learning”
 
-1. item 1
-1. item 2
+## Literature Review
 
-## Boxes and stuff
+Text
 
-> This is a quotation
+### Previous Work on this Topic
 
-{% include alert.html text="You can include alert boxes" %}
+Text
 
-...and...
+### Why Automation is (or isn’t) Appropriate
 
-{% include info.html text="You can include info boxes" %}
+Text
 
-## Images
+### Why Machine Learning is (or isn’t) Appropriate
 
-![](/images/logo.png "fast.ai's logo")
+Howard and Gugger, in their 2020 publication Deep Learning for Coders with fastai & PyTorch, outline several inherent limitations of machine learning. Paraphrased, the relevant points are,
 
-## Code
 
-General preformatted text:
+## Method
 
-    # Do a thing
-    do_thing()
+Text
 
-Python code and output:
+### Defining (a) Thermal Model(s)
 
-```python
-# Prints '2'
-print(1+1)
-```
+Text
 
-    2
+### Defining a Control System
 
-## Tables
+Text
 
-| Column 1 | Column 2 |
-|-|-|
-| A thing | Another thing |
+### Building a Neural Network
 
-## Footnotes
+Text
+
+### Training the Neural Network
+
+According to Howard and Gugger, “the single most important and challenging issue when training for all… algorithms” is overfitting.
+
+### Validating the “Predictions”
+
+Text
+
+## Results
+
+Text
+
+## Discussion
+
+Text
+
+## Summary and Conclusions
+
+Text
+
+## Acknowledgements
+
+My honors thesis supervisors, 
+Dr. Rustom Bhiladvala, and 
+Dr. Yang Shi.
+
+
+
+## References
+
+Howard and Gugger, Deep Learning for Coders with fastai & PyTorch
+
 
 [^1]: This is the footnote.
