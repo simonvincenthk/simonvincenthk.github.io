@@ -1,4 +1,4 @@
-![Image of sivihk logo](sivihk_black_retina.png)
+![Image of sivihk logo](images/sivihk_black_retina.png)
 
 # sivihk Research & Data Science
 
