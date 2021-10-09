@@ -30,7 +30,7 @@ Achieving higher efficiencies in homes that are already designed to save energy 
 
 --
 
-In this paper,
+In this article,
 - a theoretical thermal FEA model is created to simulate sustainable residential architecture,
 - a control system is devised as a substitute for real-world automation of blinds, and windows, and 
 - a machine learning algorithm is built and implemented to make experience-based control decisions about how to achieve the user's setpoint while mitigating grid power use.
@@ -97,14 +97,18 @@ Text
 ## Acknowledgements
 
 My honors thesis supervisors, 
-Dr. Rustom Bhiladvala, and 
-Dr. Yang Shi.
+- Dr. Rustom Bhiladvala, and 
+- Dr. Yang Shi.
+
+Other researchers who helped me significantly, 
+- Dr. Ralph Evins, and
+- Dr. Khosro Lari
 
 
 
 ## References
 
-Howard and Gugger, Deep Learning for Coders with fastai & PyTorch
+Howard and Gugger, *Deep Learning for Coders with fastai & PyTorch*
 
 
 [^1]: This is the footnote.
