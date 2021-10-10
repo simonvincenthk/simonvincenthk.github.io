@@ -19,7 +19,7 @@ This is a (purely) theoretical efficacy study about achieving greater energy sav
 An industry is emerging in smart home design, and, although perhaps not conventional, one has existed in sustainable living solutions for a long time. While many engineers work on the problems surrounding energy storage, adressing energy consumpion can yield results that are just as impactful.
 
 
-![Image of passive solar home](images/Passive Solar Home.jpg)
+![Image of passive solar home](images/20210800_MECH458_Image_PassiveSolarHome_shradilkasseckert.jpg)
 
 Consider a passive solar home (similar to the one shown in Figure ...). A homesteader designed it with an 80 by 7 foot south-facing wall of windows to allow solar radiation to pass into the home. Desirable amounts of heating and cooling are achieved by manually opening and closing blinds and windows. The process is repetitive and labor-intensive, which makes it an excellent candidate for automation. 
 
@@ -63,7 +63,7 @@ Text
 
 ### 3.1 Defining (a) Thermal Model(s)
 
-Historically, both experimental-apparatus’ and computer-driven simulations have been used for the validation of scientific theses, particularly in the field of engineering. In conversation, Evans, a building-energy researcher and instructor at the University of Victoria, explained that data has been a stumbling block in the building-energy research field. Often, data sets are available, but not enough information about where that came from is available to make it useful for all applications. Moreover, machine learning is inherently heavily data-dependent. In certain applications, like thermo- and fluid-dynamics more data can be obtained from computer-driven simulations than analogous experimental apparatus’ because of the absence of spatial sensor constraints. Hence, a computer-driven simulation model is used for this study. 
+Historically, both experimental-apparatus’ and computer-driven simulations have been used for the validation of scientific theses, particularly in the field of engineering. In conversation, Evans, a building-energy researcher and instructor at the University of Victoria, explained that data has been a stumbling block in the building-energy research field. Often, data sets are available, but not enough information about where that came from is available to make these sets useful for all applications. Moreover, machine learning is inherently heavily data-dependent. In certain applications, like thermo- and fluid-dynamics more data can be obtained from computer-driven simulations than analogous experimental apparatus’ because of the absence of spatial sensor constraints. Hence, a computer-driven simulation model is used for this study. 
 
 For the purposes of this study, the process of defining an appropriate first thermal model is one of simplifying a real-world scenario, while preserving all essential aspects. To do this, all critical parameters and dependencies are reviewed, and simplifying assumptions are applied to a real-world scenario:
 
