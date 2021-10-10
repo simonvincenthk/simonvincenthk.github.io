@@ -95,7 +95,7 @@ Because of these dependencies, understanding what happens to all of these parame
  
 In the introduction of this article, a passively-solar-heated home was discussed. This residential building is quite complex, and considering all thermal behaviour would go far beyond requirements of a first model, which are simply to understand the influence of windows and blind on temperature within the building. For this reason, aspects such as thermal loads, an auxiliary solar water-heating system, internal geometry (eg. furniture), and humidity are ignored. Leftover is the fundamental geometry, an HVAC system, and set of windows and blinds. This can be simplified further to a “shoe-box” model consisting of just a two-story box with an HVAC system and windows on the first and second floors. Even with this, the impact of windows and blinds on internal temperature can be studied effectively.
  
-Evans suggests using Energy Plus, a nodal building-energy simulator for constructing a computer-driven simulation.
+Evans suggests using Energy Plus, a nodal building-energy simulator for constructing a computer-driven thermal.
 
 
 ### 3.2 Defining a Control System
