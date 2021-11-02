@@ -19,7 +19,7 @@ This is a (purely) theoretical efficacy study about achieving greater energy sav
 An industry is emerging in smart home design, and, although perhaps not conventional, one has existed in sustainable living solutions for a long time. While many engineers work on the problems surrounding energy storage, adressing energy consumpion can yield results that are just as impactful.
 
 
-![Image of passive solar home](images/20210800_MECH458_Image_PassiveSolarHome_shradilkasseckert.jpg)
+![Image of passive solar home](images/PassiveSolarHome.png)
 
 Consider a passive solar home (similar to the one shown in Figure ...). A homesteader designed it with an 80 by 7 foot south-facing wall of windows to allow solar radiation to pass into the home. Desirable amounts of heating and cooling are achieved by manually opening and closing blinds and windows. The process is repetitive and labor-intensive, which makes it an excellent candidate for automation. 
 
