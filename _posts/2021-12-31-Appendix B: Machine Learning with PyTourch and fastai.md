@@ -3,7 +3,7 @@ An appendix to *Automation and Machine Learning for Grid-Power Use Minimization 
 
 ## Table of Contents
 
-* [A.1 Introduction](#section_b_1)
+* [B.1 Introduction](#section_b_1)
 * [References Revisited](#references-revisited)
 
 
@@ -14,7 +14,7 @@ Version/Revision | Date Published | Details
 V00, Rev.00 | 2021-11-25 | Initial Draft
 
 
-## A.1 Introduction <a class="anchor" id="section_a_1"></a>
+## B.1 Introduction <a class="anchor" id="section_a_1"></a>
 
 text
 
