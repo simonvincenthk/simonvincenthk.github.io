@@ -19,10 +19,9 @@ text
 * [4. Results](#section_4)
 * [5. Discussion](#section_5)
 * [6. Summary and Conclusions](#section_6)
-* [7. Acknowledgements](#acknowledgements)
+* [Acknowledgements](#acknowledgements)
+* [Appendices](#appendices)
 * [References](#references)
-* [Appendix A: EnergyPlus Shoebox Model](#appendix_a)
-* [Appendix B: Machine Learning with PyTourch and fastai](#appendix_b)
 
 Version/Revision History:
 
@@ -30,9 +29,11 @@ Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.00 | 2021-11-25 | Initial Draft
 
+
 ## 1. Introduction <a class="anchor" id="section_1"></a>
 
 text
+
 
 ## 2. Literature Review <a class="anchor" id="section_2"></a>
 
@@ -82,18 +83,15 @@ text
 
 text
 
-## 7. Acknowledgements <a class="anchor" id="acknowledgements"></a>
+## Acknowledgements <a class="anchor" id="acknowledgements"></a>
 
 text
+
+## Appendices <a class="anchor" id="appendices"></a>
+
+* Appendix A: EnergyPlus Shoebox Model 
+* Appendix B: Machine Learning with PyTourch and fastai
 
 ## References <a class="anchor" id="references"></a>
 
 text
-
-## Appendix A: EnergyPlus Shoebox Model <a class="anchor" id="appendix_a"></a>
-
-text 
-
-## Appendix B: Machine Learning with PyTourch and fastai <a class="anchor" id="appenxi_b"></a>
-
-text 
