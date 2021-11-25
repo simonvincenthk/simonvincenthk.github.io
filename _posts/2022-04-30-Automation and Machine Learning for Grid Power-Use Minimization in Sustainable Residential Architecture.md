@@ -6,20 +6,20 @@ text
 
 ## Table of Contense 
 
-* [Introduction](#section_1)
-* [Literature Review](#section_2)
-  * [Applicability of Automation & Machine Learning](#section_2_1)
-  * [Previous Work on this Topic](#section_2_2)
-* [Methods](#section_3)
-  * [Themal Model](#section_3_1)
-  * [Control System](#section_3_2)
-  * [Neural Network](#section_3_3)
-  * [Training](#section_3_4)
-  * [Validation](#section_3_5)
-* [Results](#section_4)
-* [Discussion](#section_5)
-* [Summary and Conclusions](#section_6)
-* [Acknowledgements](#acknowledgements)
+* [1. Introduction](#section_1)
+* [2. Literature Review](#section_2)
+  * [2.1 Applicability of Automation & Machine Learning](#section_2_1)
+  * [2.2 Previous Work on this Topic](#section_2_2)
+* [3. Methods](#section_3)
+  * [3.1 Themal Model](#section_3_1)
+  * [3.2 Control System](#section_3_2)
+  * [3.3 Neural Network Structure](#section_3_3)
+  * [3.4 Neural Network Training](#section_3_4)
+  * [3.5 "Prediction" Validation](#section_3_5)
+* [4. Results](#section_4)
+* [5. Discussion](#section_5)
+* [6. Summary and Conclusions](#section_6)
+* [7. Acknowledgements](#acknowledgements)
 * [References](#references)
 
 Version/Revision History:
@@ -48,7 +48,7 @@ text
 
 text
 
-### 3.1 Themal Model <a class="anchor" id="section_3_1"></a>
+### 3.1 Thermal Model <a class="anchor" id="section_3_1"></a>
 
 Defining (a) Thermal Model(s) as a source of data and a plant to be controlled
 
@@ -56,15 +56,15 @@ Defining (a) Thermal Model(s) as a source of data and a plant to be controlled
 
 Defining a Control System
 
-### 3.3 Neural Network <a class="anchor" id="section_3_3"></a>
+### 3.3 Neural Network Structure <a class="anchor" id="section_3_3"></a>
 
 Building a Neural Network
 
-### 3.4 Training <a class="anchor" id="section_3_4"></a>
+### 3.4 Neural Network Training <a class="anchor" id="section_3_4"></a>
 
 Training the Neural Network
 
-### 3.5 Validation <a class="anchor" id="section_3_5"></a>
+### 3.5 "Prediction" Validation <a class="anchor" id="section_3_5"></a>
 
 Validating the “Predictions”
 
@@ -80,7 +80,7 @@ text
 
 text
 
-## Acknowledgements <a class="anchor" id="acknowledgements"></a>
+## 7. Acknowledgements <a class="anchor" id="acknowledgements"></a>
 
 text
 
