@@ -22,6 +22,12 @@ text
 * [Acknowledgements](#acknowledgements)
 * [References](#references)
 
+Version/Revision History:
+
+Version/Revision | Date Published | Details
+-----|-----|----- 
+V00, Rev.00 | 2021-11-25 | Initial Draft
+
 ## 1. Introduction <a class="anchor" id="section_1"></a>
 
 text
