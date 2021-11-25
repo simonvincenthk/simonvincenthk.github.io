@@ -1,7 +1,7 @@
 # Appendix A: EnergyPlus Shoebox Model
 An appendix to *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*
 
-## Table of Contense 
+## Table of Contents
 
 * [A.1 Introduction](#section_a_1)
 * [A.2 EnergyPlus OpenStudioModel Model Definitions](#section_a_2)
@@ -18,6 +18,13 @@ An appendix to *Automation and Machine Learning for Grid-Power Use Minimization 
   * [A.2.11 Simulation Settings](#section_a_2_11)
   * [A.2.12 Measures](#section_a_2_12)
 * [A.3 Buoyancy Driven Cooling](#section_a_3)
+* [References Revisited](#references-revisited)
+
+Version/Revision History:
+
+Version/Revision | Date Published | Details
+-----|-----|----- 
+V00, Rev.00 | 2021-11-25 | Initial Draft
 
 
 ## A.1 Introduction <a class="anchor" id="section_a_1"></a>
@@ -64,8 +71,9 @@ An important part of the thermal model for this study is the role of openingwind
 No deffinive method esists by which to do this, and other researchers have used various approaches to include buoyancy-driven cooling in their thermal models. A few of these methods are discussed on unmethours.com, a well-known forum for EnergyPlus. Two particularly relevant approaches to controlling “operable windows” are the following
 
 * “Add Wind and Stack Open Area” Method: https://unmethours.com/question/20051/how-can-i-model-operable-windows-in-open-studio-111-and-its-schedule/
-* "AirflowNetwork:MultiZone:Component:DetailedOpening: method:" https://unmethours.com/question/13/how-do-you-model-operable-windows/
+* "AirflowNetwork:MultiZone:Component:DetailedOpening:" method: https://unmethours.com/question/13/how-do-you-model-operable-windows/
 
+## References Revisited <a class="anchor" id="references-revisited"></a>
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
 
 
