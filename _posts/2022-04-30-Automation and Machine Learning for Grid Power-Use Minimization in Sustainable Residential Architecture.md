@@ -8,8 +8,8 @@ text
 
 * [Introduction](#section_1)
 * [Literature Review](#section_2)
- * [Applicability of Automation & Machine Learning](#section_2_1)
- * [Previous Work on this Topic](#section_2_2)
+  * [Applicability of Automation & Machine Learning](#section_2_1)
+  * [Previous Work on this Topic](#section_2_2)
 * [Methods](#section_3)
   * [Themal Model](#section_3_1)
   * [Control System](#section_3_2)
