@@ -21,6 +21,8 @@ text
 * [6. Summary and Conclusions](#section_6)
 * [7. Acknowledgements](#acknowledgements)
 * [References](#references)
+* [Appendix A: EnergyPlus Shoebox Model](#appendix_a)
+* [Appendix B: Machine Learning with PyTourch and fastai](#appendix_b)
 
 Version/Revision History:
 
@@ -87,3 +89,11 @@ text
 ## References <a class="anchor" id="references"></a>
 
 text
+
+## Appendix A: EnergyPlus Shoebox Model <a class="anchor" id="appendix_a"></a>
+
+text 
+
+## Appendix B: Machine Learning with PyTourch and fastai <a class="anchor" id="appenxi_b"></a>
+
+text 
