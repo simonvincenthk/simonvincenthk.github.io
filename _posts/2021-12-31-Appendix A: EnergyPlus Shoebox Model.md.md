@@ -25,6 +25,7 @@ Version/Revision History:
 Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.00 | 2021-11-25 | Initial Draft
+V01, Rev.00 | 2021-12-23 | Midterm Submission
 
 
 ## A.1 Introduction <a class="anchor" id="section_a_1"></a>
@@ -114,10 +115,8 @@ Using Big-Ladder Software’s [^bigladder-21] EnergyPlus Online Documentation, t
 
 A few relevant notes, from Big-Ladder Software [^bigladder-21], about interpreting output variables:
 
-“Zone/HVAC - when the output is produced at the “Zone” timestep (ref: number of timesteps in each hour) or at the “HVAC” aka System timestep (which can vary for each hour).
-
+> “Zone/HVAC - when the output is produced at the “Zone” timestep (ref: number of timesteps in each hour) or at the “HVAC” aka System timestep (which can vary for each hour).
 Average/Sum - whether this is a averaged value over the reporting period (such as a temperature or rate) or whether this is a summed value over the reporting period. Reporting periods are specified in the Output:Variable or Output:Meter objects.
-
 – The variable name one uses for reporting is displayed (e.g., Site Outdoor Drybulb Temperature) along with the units (e.g., [C]).”
 
 ### A.2.11 Simulation Settings <a class="anchor" id="section_a_2_11"></a>
