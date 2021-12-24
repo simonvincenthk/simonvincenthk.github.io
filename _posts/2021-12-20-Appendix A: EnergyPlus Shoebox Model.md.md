@@ -83,7 +83,7 @@ The geometry of a model is defined in the format of a “.idf” file. [^lari-21
 
 The dimensions and orientation for the current shoebox model are comprised of two five-meter-long, by five-meter-wide, by three-meter-high (5m l × 5m w × 3m h) boxes stacked one on top of the other. Each has a four-meter-wide, by 1.5-meter-high (4m w × 1.5m h) window centered, one meter of the ground. The window for the lower box is in the south-facing wall, while the window for the upper box is in the north-facing wall. No floor/ceiling separates the lower box from the upper; however, they are defined as separate “thermal zones.”
 
-![](/images/220211200_MECH498_EnergyPlusModel_Geometry_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Geometry")
+![](/images/20211200_MECH498_EnergyPlusModel_Geometry_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Geometry")
 
 ### A.2.7 Facility <a class="anchor" id="section_a_2_7"></a>
 
