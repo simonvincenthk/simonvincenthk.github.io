@@ -57,25 +57,25 @@ Cooling and Heating Setpoint schedules were also predefined in the model supplie
 
 A schedule to control a Venetian blind covering either window was developed specifically for this study where blinds have an influence on radiative heat flux entering the building. Either Venitian blind can be either open or closed. Accordingly, an on/off schedule type is used to control them. An effort is made to schedule the blinds to be open during the winter daylight hours and closed during what will likely be the hottest daylight hours of the summer, but no ‘hard-and-fast’ rules are applied in defining this schedule. This schedule controls only the south-facing window which is exposed to the most sun. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_Schedules_VenetianBlinds_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Schedules_VenetianBlinds_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Schedules")
 
 ### A.2.3 Construction <a class="anchor" id="section_a_2_3"></a>
 
 Construction is relatively arbitrary for this study. It will impact absolute results but not relative ones between dependant variables. Knowing this, common constructions, predefined by Evins [^evins-21] and Lari [^lari-21], are left unaltered.
 
-![](/images/20211200_MECH498_EnergyPlusModel_Construction_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Construction_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Construction")
 
 ### A.2.4 Loads <a class="anchor" id="section_a_2_4"></a>
 
 Loads may be defined for people, lights, internal mass, and various types of equipment. Again, for the sake of this study these parameters have absolute and not relative effects and are left unaltered from Evins’ [^evins-21] and Lari’s [^lari-21] original model.
 
-![](/images/20211200_MECH498_EnergyPlusModel_Loads_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Loads_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Loads")
 
 ### A.2.5 Space Types <a class="anchor" id="section_a_2_5"></a>
 
 Space types can be associated with a default construction set, default schedule set, design specification for outdoor air, space infiltration flow rate, and space infiltration effective leakage areas. Evins’ [^evins-21] and Dr. Lari’s [^lari-21] original model is left unaltered, which defined only one office space type with base construction, office schedule set, and office outdoor air. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_Spaces_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Spaces_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Space Types")
 
 ### A.2.6 Geometry <a class="anchor" id="section_a_2_6"></a>
 
@@ -83,13 +83,13 @@ The geometry of a model is defined in the format of a “.idf” file. [^lari-21
 
 The dimensions and orientation for the current shoebox model are comprised of two five-meter-long, by five-meter-wide, by three-meter-high (5m l × 5m w × 3m h) boxes stacked one on top of the other. Each has a four-meter-wide, by 1.5-meter-high (4m w × 1.5m h) window centered, one meter of the ground. The window for the lower box is in the south-facing wall, while the window for the upper box is in the north-facing wall. No floor/ceiling separates the lower box from the upper; however, they are defined as separate “thermal zones.”
 
-![](/images/220211200_MECH498_EnergyPlusModel_Geometry_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/220211200_MECH498_EnergyPlusModel_Geometry_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Geometry")
 
 ### A.2.7 Facility <a class="anchor" id="section_a_2_7"></a>
 
 The facility function of energy plus is not used for the purposes of this model.
 
-![](/images/20211200_MECH498_EnergyPlusModel_Facility_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Facility_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Facility")
 
 ### A.2.8 Spaces <a class="anchor" id="section_a_2_8"></a>
 
@@ -103,13 +103,13 @@ Likewise, the shading control type for the same windows is defined as “OnIfSch
 
 Loads remain unaltered from the original shoebox model provided by Evins [^evins-21] and Lari [^lari-21], and the interior partition functionality is not used.
 
-![](/images/20211200_MECH498_EnergyPlusModel_Spaces_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Spaces_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Spaces")
 
 ### A.2.9 Thermal Zones <a class="anchor" id="section_a_2_9"></a>
 
 As stated in the ‘Geometry’ sub-section, two thermal zones are defined. This allows the temperature and temperature rate-of-change to be evaluated for both the hypothetical first floor, and the hypothetical second floor. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_ThermalZones_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_ThermalZones_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Thermal Zones")
 
 ### A.2.10 Output Variables <a class="anchor" id="section_a_2_10"></a>
 
@@ -138,19 +138,20 @@ A few relevant notes, from Big-Ladder Software [^bigladder-21], about interpreti
 Average/Sum - whether this is a averaged value over the reporting period (such as a temperature or rate) or whether this is a summed value over the reporting period. Reporting periods are specified in the Output:Variable or Output:Meter objects.
 – The variable name one uses for reporting is displayed (e.g., Site Outdoor Drybulb Temperature) along with the units (e.g., [C]).”
 
-![](/images/20211200_MECH498_EnergyPlusModel_OutputVariables_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+
+![](/images/20211200_MECH498_EnergyPlusModel_OutputVariables_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Output Variables")
 
 ### A.2.11 Simulation Settings <a class="anchor" id="section_a_2_11"></a>
 
 The relevant simulation settings are the date ranges and the number of time steps per hour. For this model, a full year with six time steps per hour is specified, resulting in 52560 data points in the final data set. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_SimulationSettings_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_SimulationSettings_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Simulation Settings")
 
 ### A.2.12 Measures <a class="anchor" id="section_a_2_12"></a>
 
 Measures allow parametric studies to be completed in EnergyPlus by changing paramtedures during a simulation period to mimic real-world applications. [^bigladder-21] They are added to the current model for the purposes of understanding the parametric affects of varied amounts of window opening on the interior temperatures over the study period. This is discussed more in depth in the following subsection (A.13).
 
-![](/images/20211200_MECH498_EnergyPlusModel_Measures_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Measures_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Measures")
 
 {% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See subsection A.13 for more information." %}
 
