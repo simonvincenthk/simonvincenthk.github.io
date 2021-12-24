@@ -24,7 +24,7 @@ Version/Revision History:
 
 Version/Revision | Date Published | Details
 -----|-----|----- 
-V00, Rev.00 | 2021-11-25 | Initial Draft
+V00, Rev.01 | 2021-11-25 | Initial Draft
 V01, Rev.00 | 2021-12-23 | Midterm Submission
 
 
@@ -167,6 +167,7 @@ The consensus among EneryPlus users on Unmet Hours, a well-known EnergyPlus foru
 
 One particularly relevant approaches to controlling “operable windows” using measures is the following:
 > “Add Wind and Stack Open Area” Method: https://unmethours.com/question/20051/how-can-i-model-operable-windows-in-open-studio-111-and-its-schedule/
+
 However, multiple other approaches are discussed here as well: 
 > “AirflowNetwork:MultiZone:Component:DetailedOpening” method: https://unmethours.com/question/13/how-do-you-model-operable-windows/
 
