@@ -150,9 +150,9 @@ The relevant simulation settings are the date ranges and the number of time step
 
 Measures allow parametric studies to be completed in EnergyPlus by changing paramtedures during a simulation period to mimic real-world applications. (OpenStudio, 2021) They are added to the current model for the purposes of understanding the parametric affects of varied amounts of window opening on the interior temperatures over the study period. This is discussed more in depth in the following subsection (A.13).
 
-Note: This part of the EnergyPlus Model is unresolved. See subsection A.13 for more information.
-
 ![](/images/20211200_MECH498_EnergyPlusModel_Measures_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+
+{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See subsection A.13 for more information." %}
 
 ## A.3 Buoyancy-Driven Cooling <a class="anchor" id="section_a_3"></a>
 
@@ -167,11 +167,10 @@ Two particularly relevant approaches to controlling “operable windows” are t
 
 For the purposes of this study, the former is used because it accurately models human bahviour and is well documented. Using this method, a maximum indoor temperature can be set above which the windows will be opened and buoyancy-driven cooling will occur. 
 
-Note: This part of the EnergyPlus Model is unresolved. See https://unmethours.com/question/66159/how-can-windows-be-controlled-so-that-they-allow-buoyancy-driven-cooling-in-a-multi-level-building/ for more information.
+{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See https://unmethours.com/question/66159/how-can-windows-be-controlled-so-that-they-allow-buoyancy-driven-cooling-in-a-multi-level-building/ for more information." %}
+
 
 ## References Revisited <a class="anchor" id="references-revisited"></a>
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
 [^lari-21]: Lari, 2021: *Shaded Window Models Energy Plus*
 [^bigladder-21]: Big-Ladder Software, 2021: Energy Plus Web-Based Documentation
-
-
