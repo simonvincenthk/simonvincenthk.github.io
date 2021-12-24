@@ -163,11 +163,12 @@ An important part of the thermal model for this study is the role of opening win
 No definitive method exists by which to do this, and other researchers have used various approaches to include buoyancy-driven cooling in their thermal models. 
 The consensus among EneryPlus users on Unmet Hours, a well-known EnergyPlus forums, seems to be that “Measures” are the best way to model opening and closing windows. (UnmetHours, 2021) 
 
-Two particularly relevant approaches to controlling “operable windows” are the following
-* “Add Wind and Stack Open Area” Method: https://unmethours.com/question/20051/how-can-i-model-operable-windows-in-open-studio-111-and-its-schedule/
-* “AirflowNetwork:MultiZone:Component:DetailedOpening” method: https://unmethours.com/question/13/how-do-you-model-operable-windows/
+One particularly relevant approaches to controlling “operable windows” using measures is the following:
+> “Add Wind and Stack Open Area” Method: https://unmethours.com/question/20051/how-can-i-model-operable-windows-in-open-studio-111-and-its-schedule/
+However, multiple other approaches are discussed here as well: 
+> “AirflowNetwork:MultiZone:Component:DetailedOpening” method: https://unmethours.com/question/13/how-do-you-model-operable-windows/
 
-For the purposes of this study, the former is used because it accurately models human bahviour and is well documented. Using this method, a maximum indoor temperature can be set above which the windows will be opened and buoyancy-driven cooling will occur. 
+For the purposes of this study, the "Add Wind and Stack Open Area" method is used because it accurately models human bahviour and is well documented. Using this method, a maximum indoor temperature can be set above which the windows will be opened and buoyancy-driven cooling will occur. 
 
 {% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See https://unmethours.com/question/66159/how-can-windows-be-controlled-so-that-they-allow-buoyancy-driven-cooling-in-a-multi-level-building/ for more information." %}
 
