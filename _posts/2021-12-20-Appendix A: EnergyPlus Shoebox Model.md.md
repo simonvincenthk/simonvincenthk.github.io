@@ -113,6 +113,8 @@ As stated in the ‘Geometry’ sub-section, two thermal zones are defined. This
 
 ### A.2.10 Output Variables <a class="anchor" id="section_a_2_10"></a>
 
+{% include alert.html text="Note: This part of the EnergyPlus Model is incomplete due to lack of clarity about which EnergyPlus output variables best meet the requirements of the model." %}
+
 Using Big-Ladder Software’s [^bigladder-21] EnergyPlus Online Documentation, the outputs that corresponding to the relevant parameters being observed have been selected and tabulated below:
 
 |          Parameter Type         |                             Parameter                            |                                               EnergyPlus Output                                               | EnergyPlus Output Desc. |
@@ -138,8 +140,6 @@ A few relevant notes, from Big-Ladder Software [^bigladder-21], about interpreti
 Average/Sum - whether this is a averaged value over the reporting period (such as a temperature or rate) or whether this is a summed value over the reporting period. Reporting periods are specified in the Output:Variable or Output:Meter objects.
 – The variable name one uses for reporting is displayed (e.g., Site Outdoor Drybulb Temperature) along with the units (e.g., [C]).”
 
-{% include alert.html text="Note: This part of the EnergyPlus Model is incomplete due to lack of clarity about which EnergyPlus output variables best meet the requirements of the model." %}
-
 ![](/images/20211200_MECH498_EnergyPlusModel_OutputVariables_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Output Variables")
 
 ### A.2.11 Simulation Settings <a class="anchor" id="section_a_2_11"></a>
@@ -150,13 +150,15 @@ The relevant simulation settings are the date ranges and the number of time step
 
 ### A.2.12 Measures <a class="anchor" id="section_a_2_12"></a>
 
+{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See subsection A.13 for more information." %}
+
 Measures allow parametric studies to be completed in EnergyPlus by changing paramtedures during a simulation period to mimic real-world applications. [^bigladder-21] They are added to the current model for the purposes of understanding the parametric affects of varied amounts of window opening on the interior temperatures over the study period. This is discussed more in depth in the following subsection (A.13).
 
 ![](/images/20211200_MECH498_EnergyPlusModel_Measures_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Measures")
 
-{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See subsection A.13 for more information." %}
-
 ## A.3 Buoyancy-Driven Cooling <a class="anchor" id="section_a_3"></a>
+
+{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See https://unmethours.com/question/66159/how-can-windows-be-controlled-so-that-they-allow-buoyancy-driven-cooling-in-a-multi-level-building/ for more information." %}
 
 An important part of the thermal model for this study is the role of opening windows on the interior environment of the building. It is known that if the windows are opened when the air inside the house is hotter than the air outside, the difference in densities will cause the hot air to rise out of the house and pull cold air from the exterior environment into the house. This phenomenon is referred to as “buoyancy-driven cooling.” [^evins-21] 
 
@@ -169,9 +171,6 @@ However, multiple other approaches are discussed here as well:
 > “AirflowNetwork:MultiZone:Component:DetailedOpening” method: https://unmethours.com/question/13/how-do-you-model-operable-windows/
 
 For the purposes of this study, the "Add Wind and Stack Open Area" method is used because it accurately models human bahviour and is well documented. Using this method, a maximum indoor temperature can be set above which the windows will be opened and buoyancy-driven cooling will occur. 
-
-{% include alert.html text="Note: This part of the EnergyPlus Model is unresolved. See https://unmethours.com/question/66159/how-can-windows-be-controlled-so-that-they-allow-buoyancy-driven-cooling-in-a-multi-level-building/ for more information." %}
-
 
 ## References Revisited <a class="anchor" id="references-revisited"></a>
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
