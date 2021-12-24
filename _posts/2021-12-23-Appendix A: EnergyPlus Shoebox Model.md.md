@@ -51,13 +51,13 @@ Historical weather data for Victoria, British Columbia is imported as “.epw”
 
 Schedules are defined for occupancy, activity, lighting, electrical equipment, and infiltration. Each of these was imported as a boiler-plate schedule set for commercial office buildings modeled in EnergyPlus. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_Schedules_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
+![](/images/20211200_MECH498_EnergyPlusModel_Schedules_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Schedules")
 
 Cooling and Heating Setpoint schedules were also predefined in the model supplied by Evins [^evins-21] and Lari [^lari-21].
 
 A schedule to control a Venetian blind covering either window was developed specifically for this study where blinds have an influence on radiative heat flux entering the building. Either Venitian blind can be either open or closed. Accordingly, an on/off schedule type is used to control them. An effort is made to schedule the blinds to be open during the winter daylight hours and closed during what will likely be the hottest daylight hours of the summer, but no ‘hard-and-fast’ rules are applied in defining this schedule. This schedule controls only the south-facing window which is exposed to the most sun. 
 
-![](/images/20211200_MECH498_EnergyPlusModel_Schedules_VenetianBlinds_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Schedules")
+![](/images/20211200_MECH498_EnergyPlusModel_Schedules_VenetianBlinds_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Schedules: Venetian Blinds")
 
 ### A.2.3 Construction <a class="anchor" id="section_a_2_3"></a>
 
