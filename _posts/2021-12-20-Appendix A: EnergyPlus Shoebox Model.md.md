@@ -138,6 +138,7 @@ A few relevant notes, from Big-Ladder Software [^bigladder-21], about interpreti
 Average/Sum - whether this is a averaged value over the reporting period (such as a temperature or rate) or whether this is a summed value over the reporting period. Reporting periods are specified in the Output:Variable or Output:Meter objects.
 – The variable name one uses for reporting is displayed (e.g., Site Outdoor Drybulb Temperature) along with the units (e.g., [C]).”
 
+{% include alert.html text="Note: This part of the EnergyPlus Model is incomplete due to lack of clarity about which EnergyPlus output variables best meet the requirements of the model." %}
 
 ![](/images/20211200_MECH498_EnergyPlusModel_OutputVariables_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Output Variables")
 
