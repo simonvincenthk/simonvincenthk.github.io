@@ -116,7 +116,7 @@ As stated in the ‘Geometry’ sub-section, two thermal zones are defined. This
 Using Big-Ladder Software’s [^bigladder-21] EnergyPlus Online Documentation, the outputs that corresponding to the relevant parameters being observed have been selected and tabulated below:
 
 |          Parameter Type         |                             Parameter                            |                                               EnergyPlus Output                                               | EnergyPlus Output Desc. |
-|:-------------------------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|:-----------------------:|
+|---------------------------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|-------------------------|
 | Constraint                      | Temperature Setpoint                                             |                                                                                                               |                         |
 | Control (Independent) Parameter | % closed (window 1)                                              |                                                                                                               |                         |
 | Control (Independent) Parameter | % blinded (window 1)                                             |                                                                                                               |                         |
@@ -148,7 +148,7 @@ The relevant simulation settings are the date ranges and the number of time step
 
 ### A.2.12 Measures <a class="anchor" id="section_a_2_12"></a>
 
-Measures allow parametric studies to be completed in EnergyPlus by changing paramtedures during a simulation period to mimic real-world applications. (OpenStudio, 2021) They are added to the current model for the purposes of understanding the parametric affects of varied amounts of window opening on the interior temperatures over the study period. This is discussed more in depth in the following subsection (A.13).
+Measures allow parametric studies to be completed in EnergyPlus by changing paramtedures during a simulation period to mimic real-world applications. [^bigladder-21] They are added to the current model for the purposes of understanding the parametric affects of varied amounts of window opening on the interior temperatures over the study period. This is discussed more in depth in the following subsection (A.13).
 
 ![](/images/20211200_MECH498_EnergyPlusModel_Measures_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Weather")
 
