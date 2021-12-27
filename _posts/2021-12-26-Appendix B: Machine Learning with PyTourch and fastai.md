@@ -94,7 +94,7 @@ Not only are machine learning models subject to the same limitations of many oth
 
 Howard and Gugger [^howardandgugger-20] discuss several potential issues related to interpreting statistical and probabilistic results. One conversation revolves around inappropriate uses of p-value analysis and hypothesis testing. 
 
-According to the American Statistical Association [^asa-16], p-value analysis can be inappropriate for the following reasons [^howardandgugger-20]: 
+According to the American Statistical Association [^asa-16], p-value analysis can be inappropriate for the following reasons: [^howardandgugger-20] 
 * P-values can indicate incompatibility between a data set and a specific statistical model. 
 * P-values do not probabilistically distinguish the event that the studied hypothesis was true from the event that a random coronation was observed in the data.
 * Scientific conclusions, business or policy decisions should not be made based on whether a p-value surpasses a specific threshold. 
