@@ -105,8 +105,8 @@ According to the American Statistical Association [^asa-16], p-value analysis ca
 Conclusions made with p-value analysis are dependent entirely on the data that analysis was performed on, and are accordingly subject to the same biases [^howardandgugger-20]. 
 
 Howard and Gugger [^howardandgugger-20] provide a “strategy to achieving valuable statistical results” in Appendix B of their book. However, two notable assertions can be inferred from their discussion about appropriate and inappropriate uses of p-value analysis:
-Statistical results should be validated by comparing them to actual, practical outcomes [^howardandgugger-20]. 
-One of the following classifications should be assigned and all possibilities should be considered along with any statistical or probabilistic conclusion [^howardandgugger-20]: 
+1. Statistical results should be validated by comparing them to actual, practical outcomes [^howardandgugger-20]. 
+2. One of the following classifications should be assigned and all possibilities should be considered along with any statistical or probabilistic conclusion [^howardandgugger-20]: 
 
 -----|-----
 There is no real relationship, but act as if there is one|There is a real relationship, and act as if there is one
