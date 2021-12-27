@@ -1,7 +1,7 @@
 # Appendix B: Machine Learning with PyTourch and fastai
 An appendix to *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*
 
-This appendix is a collection of notes, mostly from Howard and Gugger’s book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: (B.1) a theoretical introduction and discussion about machine learning, and (B.2) a deeper explanation of the methods used in this study.
+This appendix is a collection of notes, mostly from Howard and Gugger’s book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([B.1](#section_b_1)) a theoretical introduction and discussion about machine learning, and ([B.2](#section_b_2)) a deeper explanation of the methods used in this study.
 
 ## Table of Contents
 * [B.1 Theory of Machine Learning](#section_b_1)
@@ -39,7 +39,7 @@ One fundamental challenge persists even with the catalyst of modern computing. T
 
 ### B.1.2 Advantages and Disadvantages <a class="anchor" id="section_b_1_2"></a>
 
-As alluded to in the previous section (B.1.1), machine learning is valuable because of its ability to distill analytical problems into empirical ones. Problems that have historically required a strong conceptual understanding and mathematical characterization of the phenomena being studied, can now be solved accurately by (machine) learning the outcomes in similar situations. 
+As alluded to in the previous section ([B.1.1](#section_b_1_1)), machine learning is valuable because of its ability to distill analytical problems into empirical ones. Problems that have historically required a strong conceptual understanding and mathematical characterization of the phenomena being studied, can now be solved accurately by (machine) learning the outcomes in similar situations. 
 
 Machine learning algorithms have the ability to improve their results by adjusting weights used to generate predictions and are therefore said to have the ability to learn. [^howardandgugger-20] This is where the inherent advantage of machine learning can be observed. Instead of programming individual steps, machine learning algorithms can be trained, through experience, to achieve the same or similar results given only a set of inputs. [^howardandgugger-20]
 
