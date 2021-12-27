@@ -44,9 +44,9 @@ As alluded to in the previous section (B.1.1), machine learning is valuable beca
 Machine learning algorithms have the ability to improve their results by adjusting weights used to generate predictions and are therefore said to have the ability to learn. [^howardandgugger-20] This is where the inherent advantage of machine learning can be observed. Instead of programming individual steps, machine learning algorithms can be trained, through experience, to achieve the same or similar results given only a set of inputs. [^howardandgugger-20]
 
 However, Howard and Gugger [^howardandgugger-20] outline the following inherent limitations of machine learning:
-Models require labelled data (where the outcome is known) to train them.
-Models are only useful in identifying patterns that they have “seen” in their training data. 
-Models are subject to propagating any biases in their training data sets. 
+* Models require labelled data (where the outcome is known) to train them.
+* Models are only useful in identifying patterns that they have “seen” in their training data. 
+* Models are subject to propagating any biases in their training data sets. 
 
 Essentially, being statistical in nature, machine learning models depend entirely on the data used to train them which constitutes a significant portion of their ability to achieve desirable results (in addition to their architecture). Accordingly, any biases in the training data propagate to the model, and to its results. 
 
@@ -79,10 +79,42 @@ Achieving correct model fit is similar to choosing a best-fit curve where increa
 Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid overfitting models, saying that in the end, the model needs to work well on data that wasn’t used to train it. 
 
 ## B.2 Machine Learning Method <a class="anchor" id="section_b_2"></a>
+
+The software and hardware proposed by Howard and Grugger, in Deep Learning for Coders with fastai & PyTorch, is fastai, Pythorch, and python running on a Linux computer with an NVIDIA GPU. [^howardandgugger-20] Python is a popular successor of the C and C++ programming languages. PyTorch is a “flexible and developer-friendly” tool within the language designed for machine-learning applications. [^howardandgugger-20] And, fastai is a library and API that includes many recent and useful additions to machine learning. [^howardandgugger-20] NVIDIA GPUs most commonly support deep-learning libraries. [^howardandgugger-20] And, running deep-learning applications built with this software stack on Linux machines by-passes many difficulties that may otherwise arise. [^howardandgugger-20]
+
+fastai has four main predefined applications: [^howardandgugger-20] 
+1. Vision
+2. Text
+3. Tabular
+4. Collaborative Filtering. 
+
 ## B.3 Data Ethics <a class="anchor" id="section_b_3"></a>
+
+Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
+
+Howard and Gugger [^howardandgugger-20] discuss several potential issues related to interpreting statistical and probabilistic results. One conversation revolves around inappropriate uses of p-value analysis and hypothesis testing. 
+
+According to the American Statistical Association [^asa-16], p-value analysis can be inappropriate for the following reasons [^howardandgugger-20]: 
+* P-values can indicate incompatibility between a data set and a specific statistical model. 
+* P-values do not probabilistically distinguish the event that the studied hypothesis was true from the event that a random coronation was observed in the data.
+* Scientific conclusions, business or policy decisions should not be made based on whether a p-value surpasses a specific threshold. 
+* Proper reporting depends on inference for which full transparency is necessary. 
+* P-values and statistical significance do not quantify the size or importance of an observed effect.
+* Alone, a p-value does not provide a good measure of evidence regarding a model or hypothesis.
+
+Conclusions made with p-value analysis are dependent entirely on the data that analysis was performed on, and are accordingly subject to the same biases [^howardandgugger-20]. 
+
+Howard and Gugger [^howardandgugger-20] provide a “strategy to achieving valuable statistical results” in Appendix B of their book. However, two notable assertions can be inferred from their discussion about appropriate and inappropriate uses of p-value analysis:
+Statistical results should be validated by comparing them to actual, practical outcomes [^howardandgugger-20]. 
+One of the following classifications should be assigned and all possibilities should be considered along with any statistical or probabilistic conclusion [^howardandgugger-20]: 
+
+|:-----|:-----|
+|There is no real relationship, but act as if there is one.|There is a real relationship, and act as if there is one.|
+|There is no real relationship, and act as if there isn’t one.|There is no real relationship, and act as if there is one.|
 
 ## References Revisited <a class="anchor" id="references-revisited"></a>
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
 [^howardandgugger-20]: Howard and Gugger, 2021: *Deep Learning for Coders with fastai & PyTorch*
 [^zeilerandfergus-13]: Zeiler and Fergus, 2013: *Visualizing and Understanding Convolutional Networks*
+[^asa-16]: ASA, 2016: *American Statistical Association Releases Statement on Statistical Significance and P-Values*
 
