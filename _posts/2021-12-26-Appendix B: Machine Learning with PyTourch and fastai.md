@@ -25,7 +25,7 @@ V01, Rev.00 | 2021-12-26 | Midterm Submission
 
 ## B.1 Theory of Machine Learning <a class="anchor" id="section_b_1"></a>
 
-In this first section of the current appendix (B) machine learning is introduced and its applicability and basic functioning are discussed.
+In this first section of the current appendix ([B](https://simonvincenthk.github.io/2021/12/26/Appendix-B-Machine-Learning-with-PyTourch-and-fastai.html)) machine learning is introduced and its applicability and basic functioning are discussed.
 
 ### B.1.1 Introduction to Machine Learning <a class="anchor" id="section_b_1_1"></a>
 
