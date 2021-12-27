@@ -6,6 +6,7 @@ text
 
 ## Table of Contense 
 
+* [Glossary](#glossary)
 * [1. Introduction](#section_1)
 * [2. Literature Review](#section_2)
   * [2.1 Applicability of Automation & Machine Learning](#section_2_1)
@@ -27,8 +28,12 @@ Version/Revision History:
 
 Version/Revision | Date Published | Details
 -----|-----|----- 
-V00, Rev.00 | 2021-11-25 | Initial Draft
+V00, Rev.01 | 2021-11-25 | Initial Draft
+V01, Rev.00 | 2021-12-27 | Midterm Submission
 
+## Glossary <a class="anchor" id="glossary"></a>
+
+* [Glossary](https://simonvincenthk.github.io/2021/12/26/Glossary.html)
 
 ## 1. Introduction <a class="anchor" id="section_1"></a>
 
@@ -89,8 +94,8 @@ text
 
 ## Appendices <a class="anchor" id="appendices"></a>
 
-* Appendix A: EnergyPlus Shoebox Model 
-* Appendix B: Machine Learning with PyTourch and fastai
+* [Appendix A: EnergyPlus Shoebox Model](https://simonvincenthk.github.io/2021/12/23/Appendix-A-EnergyPlus-Shoebox-Model.md.html)
+* [Appendix B: Machine Learning with PyTourch and fastai](https://simonvincenthk.github.io/2021/12/26/Appendix-B-Machine-Learning-with-PyTourch-and-fastai.html)
 
 ## References <a class="anchor" id="references"></a>
 
