@@ -108,7 +108,6 @@ Howard and Gugger [^howardandgugger-20] provide a “strategy to achieving valua
 Statistical results should be validated by comparing them to actual, practical outcomes [^howardandgugger-20]. 
 One of the following classifications should be assigned and all possibilities should be considered along with any statistical or probabilistic conclusion [^howardandgugger-20]: 
 
-No real relationship | Real relationship
 -----|-----
 There is no real relationship, but act as if there is one|There is a real relationship, and act as if there is one
 There is no real relationship, and act as if there isn’t one|There is no real relationship, and act as if there is one
