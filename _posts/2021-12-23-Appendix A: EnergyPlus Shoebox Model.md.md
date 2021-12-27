@@ -73,7 +73,7 @@ Loads may be defined for people, lights, internal mass, and various types of equ
 
 ### A.2.5 Space Types <a class="anchor" id="section_a_2_5"></a>
 
-Space types can be associated with a default construction set, default schedule set, design specification for outdoor air, space infiltration flow rate, and space infiltration effective leakage areas. Evins’ [^evins-21] and Dr. Lari’s [^lari-21] original model is left unaltered, which defined only one office space type with base construction, office schedule set, and office outdoor air. 
+Space types can be associated with a default construction set, default schedule set, design specification for outdoor air, space infiltration flow rate, and space infiltration effective leakage areas. Evins’ [^evins-21] and Lari’s [^lari-21] original model is left unaltered, which defined only one office space type with base construction, office schedule set, and office outdoor air. 
 
 ![](/images/20211200_MECH498_EnergyPlusModel_Spaces_shradilkasseckert.jpg "EnergyPlus Shoebox Model: Space Types")
 
