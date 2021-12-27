@@ -33,7 +33,7 @@ Machine learning is a widely-applicable method of problem-solving. [^howardandgu
 
 In the early days, before the advent of modern-day computers, the structure of neural networks had been defined, but it was difficult to apply these architectures without the ability to construct neural networks with many levels and process data in large quantities. The mathematics involved in the training are fundamentally simple since the operations involved are almost purely arithmetic; however, the iterative nature of the process makes numerical computing power necessary. [^howardandgugger-20] 
 
-Now, machine learning has evolved to a point where it has been mathematically proven that deep learning algorithms, those with multi-level neural networks, can solve problems of infinite complexity. [^howardandgugger-20] And, the Universal Approximation Theorem mathematically proves that a neural network can solve any problem to any level of accuracy. [^howardandgugger-20] 
+Now, machine learning has evolved to a point where it has been mathematically proven that deep learning algorithms, those with multi-level neural networks, can solve problems of infinite complexity. [^howardandgugger-20] And, the *Universal Approximation Theorem* mathematically proves that a neural network can solve any problem to any level of accuracy. [^howardandgugger-20] 
 
 One fundamental challenge persists even with the catalyst of modern computing. That is applying data with known outcomes to a model's architecture in such a way that the results it produces for data with unknown outcomes are useful. The challenge in training neural networks is the process of finding “good” weights to do this. [^howardandgugger-20] 
 
@@ -80,7 +80,7 @@ Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid over
 
 ## B.2 Machine Learning Method <a class="anchor" id="section_b_2"></a>
 
-The software and hardware proposed by Howard and Grugger, in Deep Learning for Coders with fastai & PyTorch, is fastai, Pythorch, and python running on a Linux computer with an NVIDIA GPU. [^howardandgugger-20] Python is a popular successor of the C and C++ programming languages. PyTorch is a “flexible and developer-friendly” tool within the language designed for machine-learning applications. [^howardandgugger-20] And, fastai is a library and API that includes many recent and useful additions to machine learning. [^howardandgugger-20] NVIDIA GPUs most commonly support deep-learning libraries. [^howardandgugger-20] And, running deep-learning applications built with this software stack on Linux machines by-passes many difficulties that may otherwise arise. [^howardandgugger-20]
+The software and hardware proposed by Howard and Grugger, in *Deep Learning for Coders with fastai & PyTorch*, is fastai, Pythorch, and python running on a Linux computer with an NVIDIA GPU. [^howardandgugger-20] Python is a popular successor of the C and C++ programming languages. PyTorch is a “flexible and developer-friendly” tool within the language designed for machine-learning applications. [^howardandgugger-20] And, fastai is a library and API that includes many recent and useful additions to machine learning. [^howardandgugger-20] NVIDIA GPUs most commonly support deep-learning libraries. [^howardandgugger-20] And, running deep-learning applications built with this software stack on Linux machines by-passes many difficulties that may otherwise arise. [^howardandgugger-20]
 
 fastai has four main predefined applications: [^howardandgugger-20] 
 1. Vision
@@ -108,9 +108,10 @@ Howard and Gugger [^howardandgugger-20] provide a “strategy to achieving valua
 Statistical results should be validated by comparing them to actual, practical outcomes [^howardandgugger-20]. 
 One of the following classifications should be assigned and all possibilities should be considered along with any statistical or probabilistic conclusion [^howardandgugger-20]: 
 
-|:-----|:-----|
-|There is no real relationship, but act as if there is one.|There is a real relationship, and act as if there is one.|
-|There is no real relationship, and act as if there isn’t one.|There is no real relationship, and act as if there is one.|
+No real relationship | Real relationship
+-----|-----
+There is no real relationship, but act as if there is one|There is a real relationship, and act as if there is one
+There is no real relationship, and act as if there isn’t one|There is no real relationship, and act as if there is one
 
 ## References Revisited <a class="anchor" id="references-revisited"></a>
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
