@@ -25,4 +25,6 @@ V01, Rev.00 | 2021-12-28 | Midterm Submission
 ### 2.3 Applying Machine Learning<a class="anchor" id="#section_2_3"></a>
 ### 2.4 Discussing the Results <a class="anchor" id="#section_2_4"></a>
 ## 3. Progress <a class="anchor" id="#section_3"></a>
+<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQZI65jhQAXzOxCGrRKfGJS0fmVEyvjDGkrmnpU1NwBC1KDSgcOX-6XnauDqujhK4Uswmexr8N81LJm/pubhtml?gid=1812548763&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+
 ## 4. Next Steps <a class="anchor" id="#section_4"></a>
