@@ -191,6 +191,7 @@ Validating the “Predictions”
 [^ardakanianetal-18]: Ardakanian et at., 2018: *Non-intrusive occupancy monitoring for energy conservation in commercial buildings*
 [^asa-16]: ASA, 2016: *American Statistical Association Releases Statement on Statistical Significance and P-Values*
 [^bigladder-21]: Big-Ladder Software, 2021: *Energy Plus Web-Based Documentation*
+[^bhiladvala-21]: Bhiladvala, 2021: *Honors Thesis* 
 [^brackneyetal-18]: Brackney et al., 2018: *Building Energy Modeling with OpenStudio*
 [^dingetal-19]: Ding et at., 2019: *OCTOPUS: Deep Reinforcement Learning for Holistic Smart Building Control*
 [^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
