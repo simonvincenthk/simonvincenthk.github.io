@@ -4,7 +4,7 @@
 
 text
 
-## Table of Contense 
+## Table of Contents 
 
 * [Glossary](#glossary)
 * [1. Introduction](#section_1)
