@@ -191,7 +191,7 @@ Validating the “Predictions”
 [^asa-16]: ASA, 2016: American Statistical Association Releases Statement on Statistical Significance and P-Values
 [^bigladder-21]: Big-Ladder Software, 2021: Energy Plus Web-Based Documentation
 [^brackneyetal-18]: Brackney et al., 2018: Building Energy Modeling with OpenStudio
-[^dingetal-21]: Ding et at., 2019: OCTOPUS: Deep Reinforcement Learning for Holistic Smart Building Control
+[^dingetal-19]: Ding et at., 2019: OCTOPUS: Deep Reinforcement Learning for Holistic Smart Building Control
 [^evins-21]: Evins, 2021: Building Energy Data for Machine Learning
 [^goyaletal-11]: Goyal et at., 2011: Identification of multi-zone building thermal interaction model from data.
 [^howardandgugger-20]: Howard and Gugger, 2021: Deep Learning for Coders with fastai & PyTorch
