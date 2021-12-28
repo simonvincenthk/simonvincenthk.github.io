@@ -45,6 +45,8 @@ Achieving higher efficiencies in homes that are already designed to save energy 
 
 Consider a passive solar home (similar to the one shown in the figure below). The building in the image features an 80-foot-wide by 7-foot-high, south-facing wall of windows designed to allow solar radiation to pass into the home and heat up the concrete floor. The floor acts as a thermal heat store and dissipates heat back into the home over the following days. All passive solar homes share some version of this design.
 
+![](/images/20211200_MECH498_PassiveSolarHome_shradilkasseckert.jpg "Passive solar homes")
+
 Desirable amounts of low-energy-consumption heating and cooling are achieved in the pictured home by manually opening and closing blinds and windows to alter radiative and convective heat transfer into and out of the house. Although it reduces the amount of grid power used for heating and cooling, opening and closing the blinds and windows is repetitive and labour-intensive. This makes it an excellent candidate for automation.
 
 Deciding when to, and how much to open the blinds and windows is not trivial. A great deal of knowledge about thermal behaviour or experience about how the temperature in the home will change is needed to make the right decision. This decision-making process may be well addressed using machine learning—a data-driven method that removes the need for creating a definitive mathematical model of the system being controlled.
@@ -128,6 +130,8 @@ With this information, aspects such as thermal loads, an auxiliary solar water-h
   * heat gain (due to the H-VAC system)
 
 A block diagram representation of the control system can help visualize the role these parameters play on the system as a whole:
+
+![](/images/20211200_MECH498_ControlSystem_shradilkasseckert.jpg "Control System Block Diagram")
 
 The machine learning (ML) control application is given a set of inputs about the outdoor conditions and an error rate indicating the difference between desired and actual indoor conditions and is tasked with the objective outlined above. Its outputs are a set of commands for the amount to open or close windows and blinds as well as an amount of power sent to a heating system.
 
