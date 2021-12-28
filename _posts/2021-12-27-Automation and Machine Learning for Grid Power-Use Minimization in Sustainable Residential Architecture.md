@@ -187,21 +187,21 @@ Validating the “Predictions”
 
 ## References <a class="anchor" id="references"></a>
 
-[^ardakanianetal-18]: Ardakanian et at., 2018: Non-intrusive occupancy monitoring for energy conservation in commercial buildings.
-[^asa-16]: ASA, 2016: American Statistical Association Releases Statement on Statistical Significance and P-Values
-[^bigladder-21]: Big-Ladder Software, 2021: Energy Plus Web-Based Documentation
-[^brackneyetal-18]: Brackney et al., 2018: Building Energy Modeling with OpenStudio
-[^dingetal-19]: Ding et at., 2019: OCTOPUS: Deep Reinforcement Learning for Holistic Smart Building Control
-[^evins-21]: Evins, 2021: Building Energy Data for Machine Learning
-[^goyaletal-11]: Goyal et at., 2011: Identification of multi-zone building thermal interaction model from data.
-[^howardandgugger-20]: Howard and Gugger, 2021: Deep Learning for Coders with fastai & PyTorch
-[^lari-21]: Lari, 2021: Shaded Window Models Energy Plus
-[^machorrocanoetal-20]: Machorro-Cano et al., 2020: HEMS-IoT: A Big Data and Machine-Learning Based Smart Home System for Energy Saving
-[^nrcan-19]: Natural Resources Canada, 2019: Energy Use Data Handbook
-[^openstudio-21]: OpenStudio, 2021: Open Studio SDK User Docs: About Measures
-[^unmethours-21]: UnmetHours, 2021: Open Studio SDK User Docs: About Measures
-[^useia-20]: U.S. Energy Information Administration, 2020: Energy Use Data Handbook
-[^wangandhong-20]: Wang and Hong, 2020: Reinforcement learning for building controls: The opportunities and challenges
-[^zeilerandfergus-13]: Zeiler and Fergus, 2013: Visualizing and Understanding Convolutional Networks
-[^zhangetal-21]: Zhang et at., 2021: On the Joint Control of Multiple Building Systems with Reinforcement Learning
-[^zhouetal-17]: Zhou et at., 2017: Quantitative Comparison of data-driven and physics-based models for commercial building HVAC systems.
+[^ardakanianetal-18]: Ardakanian et at., 2018: *Non-intrusive occupancy monitoring for energy conservation in commercial buildings*
+[^asa-16]: ASA, 2016: *American Statistical Association Releases Statement on Statistical Significance and P-Values*
+[^bigladder-21]: Big-Ladder Software, 2021: *Energy Plus Web-Based Documentation*
+[^brackneyetal-18]: Brackney et al., 2018: *Building Energy Modeling with OpenStudio*
+[^dingetal-19]: Ding et at., 2019: *OCTOPUS: Deep Reinforcement Learning for Holistic Smart Building Control*
+[^evins-21]: Evins, 2021: *Building Energy Data for Machine Learning*
+[^goyaletal-11]: Goyal et at., 2011: *Identification of multi-zone building thermal interaction model from data*
+[^howardandgugger-20]: Howard and Gugger, 2021: *Deep Learning for Coders with fastai & PyTorch*
+[^lari-21]: Lari, 2021: *Shaded Window Models Energy Plus*
+[^machorrocanoetal-20]: Machorro-Cano et al., 2020: *HEMS-IoT: A Big Data and Machine-Learning Based Smart Home System for Energy Saving*
+[^nrcan-19]: Natural Resources Canada, 2019: *Energy Use Data Handbook*
+[^openstudio-21]: OpenStudio, 2021: *Open Studio SDK User Docs: About Measures*
+[^unmethours-21]: UnmetHours, 2021: *How do you model operable windows?*
+[^useia-20]: U.S. Energy Information Administration, 2020: *Energy Use Data Handbook*
+[^wangandhong-20]: Wang and Hong, 2020: *Reinforcement learning for building controls: The opportunities and challenges*
+[^zeilerandfergus-13]: Zeiler and Fergus, 2013: *Visualizing and Understanding Convolutional Networks*
+[^zhangetal-21]: Zhang et at., 2021: *On the Joint Control of Multiple Building Systems with Reinforcement Learning*
+[^zhouetal-17]: Zhou et at., 2017: *Quantitative Comparison of data-driven and physics-based models for commercial building HVAC systems*
