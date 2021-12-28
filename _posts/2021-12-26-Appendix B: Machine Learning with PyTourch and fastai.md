@@ -1,5 +1,5 @@
 # Appendix B: Machine Learning with PyTourch and fastai
-An appendix to *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*
+An appendix to [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html)
 
 This appendix is a collection of notes, mostly from Howard and Gugger’s book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([B.1](#section_b_1)) a theoretical introduction and discussion about machine learning, and ([B.2](#section_b_2)) a deeper explanation of the methods used in this study.
 
