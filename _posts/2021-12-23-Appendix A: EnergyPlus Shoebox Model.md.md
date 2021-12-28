@@ -1,5 +1,5 @@
 # Appendix A: EnergyPlus Shoebox Model
-An appendix to *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*
+An appendix to [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html)
 
 An important component of the current study is a labelled dataset to train, validate, and test the final machine learning control system used to work towards greater energy savings. Since real, relevant datasets are difficult to obtain, a simulated dataset is generated using the nodal building energy simulation engine EnergyPlus. This appendix (A) explains the model built in EnergyPlus for which labelled data is obtained. 
 
