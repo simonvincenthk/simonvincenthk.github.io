@@ -13,7 +13,7 @@ text
   * [2.2 Previous Work on this Topic](#section_2_2)
 * [3. Methods](#section_3)
   * [3.1 Control System](#section_3_1)
-  * [3.2 Themal Model](#section_3_2)
+  * [3.2 Thermal Model](#section_3_2)
   * [3.3 Neural Network Structure](#section_3_3)
   * [3.4 Neural Network Training](#section_3_4)
   * [3.5 "Prediction" Validation](#section_3_5)
