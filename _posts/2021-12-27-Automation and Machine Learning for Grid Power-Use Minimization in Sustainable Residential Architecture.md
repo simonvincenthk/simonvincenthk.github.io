@@ -92,6 +92,7 @@ In their 2021 paper, On the Joint Control of Multiple Building Systems with Rein
 * state-of-the-art reinforcement learning control schemes,
 * the contradictions between energy consumption, thermal comfort, and visual comfort, and
 * the performance of the proposed methods in joint control of energy systems when occupancy behaviour is known,
+
 far exceed the scope of this undergraduate-level feasibility study; however, their paper is recommended as further reading, particularly for joint-control, commercial-building applications of the same automation and machine learning approach to energy savings proposed here for low-energy consumption homes. 
 
 ## 3. Methods <a class="anchor" id="section_3"></a>
