@@ -56,7 +56,10 @@ A scope that is too broad or too narrow can result in conclusions that are not u
 
 The scope of this study on *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture* was defined early on in the project to ensure that work done throughout the remainder of the term was towards a useful conclusion. 
 
-{% include info.html text="Note: The progress made in this area of the report can be found in the [first version of the final article](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html). In the introduction and control system sections, purpose, novelty, and scope are addressed." %}
+{% include info.html text="Note: The progress made in this area of the report can be found in the first version of the final article. In the introduction and control system sections, purpose, novelty, and scope are addressed." %}
+
+**Relevant Links:**
+* [first version of *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html)
 
 ### 2.2 Learning Machine Learning <a class="anchor" id="#section_2_2"></a>
 
@@ -76,7 +79,10 @@ All of the lessons are relevant to the project and should be completed before fi
 
 The lecture and assignment for the first lesson and the lecture for the second lesson have been completed. The remaining lectures and assignments are outstanding at this time. The material learned so far has been included in the current version of the final article as an appendix ([B](https://simonvincenthk.github.io/2021/12/26/Appendix-B-Machine-Learning-with-PyTourch-and-fastai.html)).
 
-{% include info.html text="Note: The progress made in this area of the report can be found in [Appendix B](https://simonvincenthk.github.io/2021/12/26/Appendix-B-Machine-Learning-with-PyTourch-and-fastai.html). There, machine learning is discussed to give the layperson context and a basic understanding of the applicability and functioning of the technology." %}
+{% include info.html text="Note: The progress made in this area of the report can be found in Appendix B. There, machine learning is discussed to give the layperson context and a basic understanding of the applicability and functioning of the technology." %}
+
+**Relevant Links:**
+* [Appendix B](https://simonvincenthk.github.io/2021/12/26/Appendix-B-Machine-Learning-with-PyTourch-and-fastai.html)
 
 ### 2.3 Applying Machine Learning<a class="anchor" id="#section_2_3"></a>
 
@@ -99,7 +105,10 @@ And, model testing serves as an opportunity to see whether the model performs re
 
 Since the dependencies between relevant parameters and what constitutes a labelled dataset are already understood, progress has been made on creating an EnergyPlus simulation to generate a dataset for training, validation, and testing. All relevant phenomena except buoyancy-driven cooling have been included. Likewise, the simulation runs; however, not all relevant output parameters have been selected. A description of the EenergyPlus simulation is included in the current version of the final article as an appendix ([A](https://simonvincenthk.github.io/2021/12/23/Appendix-A-EnergyPlus-Shoebox-Model.md.html)).
 
-{% include info.html text="Note: The progress made in this area of the report can be found in [Appendix A](https://simonvincenthk.github.io/2021/12/23/Appendix-A-EnergyPlus-Shoebox-Model.md.html). There, the software used to simulate the situation studied in this project as well as how it is constructed and run is discussed." %}
+{% include info.html text="Note: The progress made in this area of the report can be found in Appendix A. There, the software used to simulate the situation studied in this project as well as how it is constructed and run is discussed." %}
+
+**Relevant Links:**
+* [Appendix A](https://simonvincenthk.github.io/2021/12/23/Appendix-A-EnergyPlus-Shoebox-Model.md.html)
 
 ### 2.4 Discussing the Results <a class="anchor" id="#section_2_4"></a>
 
@@ -150,14 +159,28 @@ The following are three actions that should be taken to ensure the successful co
 * Narrowing the scope of the project.
 * Seeking mentorship from a subject matter expert.
 * Establishing a structure for the remainder of the work to be completed. 
+Each is discussed in turn in the following subsections:
 
 ### 4.1 Project Scope <a class="anchor" id="#section_4_1"></a>
 
+To ensure the successful completion of this project in the allotted work term (September 2021 – April 2022), it may be necessary to narrow the scope of the project. Beyond the limitations provided by the current definition of scope in the introduction and control system sections of the current version of the final article, several phenomena may have to be excluded from the EnergyPlus Simulation and control system. 
+
+Evins [^evins-21] recommended excluding buoyancy-driven cooling because it can be difficult to simulate and because the focus of this study is on the application of automation and machine learning. This simplification should be entertained and discussed with supervisors at the beginning of the second half of the project work term. 
 
 ### 4.2 Mentorship <a class="anchor" id="#section_4_2"></a>
 
+Content-specific mentorship may be necessary for the successful completion of this project, specifically in the area of building energy. 
+
+Early in the work term, Dr. Ralph Evnins [^evins-21], a building energy researcher and instructor at the *University of Victoria* was consulted regarding a labelled dataset for this study. He shared some of his recent research, *On the Joint Control of Multiple Building Systems with Reinforcement Learning*, [^zhangetal-21] which is very similar to the work being done on this project, and expressed an interest in getting involved as a supervisor. Together with his ability to define a realistic project scope, Dr. Evins’ technical knowledge of building energy and applications of machine learning would be a great asset to the completion of this project. 
+
+At the beginning of the second half of the work term, Dr. Evnis and the Department of Mechanical Engineering will be consulted regarding his involvement throughout the remainder of the project. 
 
 ### 4.3 Structure <a class="anchor" id="#section_4_3"></a>
+
+Successful completion of the project will be achieved by following the structure laid out in the Gantt chart provided in the previous section. To maintain synchronicity with it, 
+* two lessons from the [*fastai* “Practical Deep Learning for Coders”](https://course.fast.ai/) course should be completed per week during January (2022),
+* the machine learning control application model should be constructed, trained, validated, and tested during February (2022), and 
+* all analysis and discussion of the results should be completed during March (2022). 
 
 ## References <a class="anchor" id="#references"></a>
 
