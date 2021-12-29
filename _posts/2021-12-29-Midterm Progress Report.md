@@ -12,6 +12,9 @@ A report discussing the progress of the *Automation and Machine Learning for Gri
   * [2.4 Discussing the Results](#section_2_4)
 * [3. Gantt Chart Overview](#section_3)
 * [4. Next Steps](#section_4)
+  * [4.1 Project Scope](#section_4_1)
+  * [4.2 Mentorship](#section_4_2)
+  * [4.3 Structure](#section_4_3)
 * [References](#references)
 
 Version/Revision History:
@@ -19,7 +22,7 @@ Version/Revision History:
 Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.01 | 2021-12-28 | Initial Draft
-V01, Rev.00 | 2021-12-28 | Midterm Submission
+V01, Rev.00 | 2021-12-29 | Midterm Submission
 
 ## 1. Introduction <a class="anchor" id="#section_1"></a>
 
@@ -100,7 +103,17 @@ Since the dependencies between relevant parameters and what constitutes a labell
 
 ### 2.4 Discussing the Results <a class="anchor" id="#section_2_4"></a>
 
+There are several points of evaluation and discussion for the results:
+Whether the machine learning control application can reliably reach the indoor temperature setpoint while minimizing the use of grid power.
+Whether there is a notable decrease in energy consumption with automation of windows and blinds and a machine learning control application.
+Whether the automation and machine learning approach studied in this report is more broadly applicable, beyond passive solar homes, and sustainable residential architecture. 
+Whether there are recommendations for continued improvement. 
 
+Bhiladvala [^bhiladvala-21] particularly encourages study and discussion of the automation and machine learning approach in multiple settings in addition to an explicit statement about the benefits it provides. His motivation in providing this advice is that the final article provides a definitive and useful conclusion.
+
+The discussion and results position of the project has not been addressed at this time. 
+
+{% include alert.html text="Note: Since the study is incomplete, no evaluation or discussion of the results has been done at this time." %}
 
 ## 3. Gantt Chart Overview <a class="anchor" id="#section_3"></a>
 
@@ -114,7 +127,7 @@ Based on the discussion of the project and progress provided above, a Gantt char
 | Final Report                               | Incomplete  |          |          |          |             |          |          |          | 30 Apr 2022 |
 | **Milestones**                             |             |          |          |          |             |          |          |          |             |
 |*1. Defining the Scope of the Study*        | Complete    |*Sep 2021*|*Oct 2021*|          |             |          |          |          |             |
-| 2. Learning Machine Learning               | In Progress |          |          |          |             |          |          |          |             |
+| 2. Learning Machine Learning               | In Progress |*Sep 2021*|*Oct 2021*|*Nov 2021*|*Dec 2021*   |*Jan 2022*|          |          |             |
 | 2.1 Lesson 1 – Your first model            | Complete    | Sep 2021 | Oct 2021 |          |             |          |          |          |             |
 | 2.2 Lesson 2 – Evidence and p-values       | In Progress |          | Oct 2021 |          |             | Jan 2022 |          |          |             |
 | 2.3 Lesson 3 – Production and deployment   | Incomplete  |          |          |          |             | Jan 2022 |          |          |             |
@@ -123,7 +136,7 @@ Based on the discussion of the project and progress provided above, a Gantt char
 | 2.6 Lesson 6 – Collaborative filtering     | Incomplete  |          |          |          |             | Jan 2022 |          |          |             |
 | 2.7 Lesson 7 – Tabular data                | Incomplete  |          |          |          |             | Jan 2022 |          |          |             |
 | 2.8 Lesson 8 – Natural language processing | Incomplete  |          |          |          |             | Jan 2022 |          |          |             |
-|*3. Applying Machine Learning*              | In Progress |          |*Oct 2021*|*Nov 2021*|*Dec 2021*   |          |*Feb 2022*|          |             |
+|*3. Applying Machine Learning*              | In Progress |          |*Oct 2021*|*Nov 2021*|*Dec 2021*   |*Jan 2022*|*Feb 2022*|          |             |
 | 3.1 Architecture Selection                 | Incomplete  |          |          |          |             |          | Feb 2022 |          |             |
 | 3.2 Labeled Dataset Obtainment             | In Progress |          | Oct 2021 | Nov 2021 | Dec 2021    |          |          |          |             |
 | 3.3 Model Training                         | Incomplete  |          |          |          |             |          | Feb 2022 |          |             |
@@ -132,6 +145,19 @@ Based on the discussion of the project and progress provided above, a Gantt char
 | *4. Discussion of Results*                 | Incomplete  |          |          |          |             |          |          |*Mar 2022*|             |
 
 ## 4. Next Steps <a class="anchor" id="#section_4"></a>
+
+The following are three actions that should be taken to ensure the successful completion of this project:
+* Narrowing the scope of the project.
+* Seeking mentorship from a subject matter expert.
+* Establishing a structure for the remainder of the work to be completed. 
+
+### 4.1 Project Scope <a class="anchor" id="#section_4_1"></a>
+
+
+### 4.2 Mentorship <a class="anchor" id="#section_4_2"></a>
+
+
+### 4.3 Structure <a class="anchor" id="#section_4_3"></a>
 
 ## References <a class="anchor" id="#references"></a>
 
