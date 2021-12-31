@@ -1,6 +1,6 @@
 # Midterm Progress Report
 
-A report discussing the progress of the *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture* project, halfway through the work period allotted to completing it (4/8 months). 
+A report discussing the progress of the [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html) project, halfway through the work period allotted its completion (4/8 months). 
 
 ## Table of Contents
 
@@ -28,17 +28,17 @@ V01, Rev.00 | 2021-12-29 | Midterm Submission
 
 The objective of this progress report is to provide clarity about the purpose and scope of the project, segment it into definable and actionable items, show the progress that has been made, and discuss what next steps need to be made to ensure successful completion. 
 
-The *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture* project was motivated, somewhat serendipitously, during travel across Canada. The author visited a passive solar home and witnessed the homeowners’ efforts to achieve greater energy savings by opening and closing windows and blinds manually to control the indoor temperature. It became evident that with the assistance of automation and control applications, sustainable living solutions could become more accessible to those prospective homeowners less motivated to pick up new manual house duties. Accordingly, the feasibility of achieving greater energy savings in sustainable residential architecture using automation and machine learning has become the focus of this project.
+The [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html) project was motivated, somewhat serendipitously, during travel across Canada. While visiting a passive solar home, the homeowners’ efforts to achieve greater energy savings by opening and closing windows and blinds manually to control the indoor temperature were witnessed. It became evident that with the assistance of automation and control applications, sustainable living solutions could become more accessible to those prospective homeowners less motivated to pick up new manual house duties. Accordingly, the feasibility of achieving greater energy savings in sustainable residential architecture using automation and machine learning has become the focus of this project.
 
 In subsequent sections, the project is broken up into four large yet definable sections, for each of which the current progress on the project is explained ([Section 2](#section_2)), a Gantt chart overview is provided ([Section 3](#section_3)), and recommendations for improvement during the second half of the work term are made ([Section 4](#section_4)).
 
 ## 2. Project and Progress <a class="anchor" id="#section_2"></a>
 
-The *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture* project can be broken down into four major sections: 
-* Defining the Scope of the Study
-* Learning Machine Learning
-* Applying Machine Learning 
-* Discussing the Results
+The [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html) project can be broken down into four major sections: 
+1. Defining the Scope of the Study
+2. Learning Machine Learning
+3. Applying Machine Learning 
+4. Discussing the Results
 Each serves a unique purpose in creating a cohesive, novel, and useful final article.
 
 Progress has been made in the following three areas of the project:
@@ -54,7 +54,7 @@ The scope of the study being done is driven by the project’s purpose; however,
 
 A scope that is too broad or too narrow can result in conclusions that are not useful. Too broad a scope can lead to no conclusion or conclusions for which there are too many irrelevant but influential parameters. Likewise, too narrow a scope can lead to conclusions for which there are no or few applications. Bhiladvala [^bhiladvala-21], one of the co-supervisors for this project, stresses the importance of erring on the side of a narrow scope so that the conclusions made are definitive even if their application is limited.
 
-The scope of this study on *Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture* was defined early on in the project to ensure that work done throughout the remainder of the term was towards a useful conclusion. 
+The scope of this study on [*Automation and Machine Learning for Grid-Power Use Minimization in Sustainable Residential Architecture*](https://simonvincenthk.github.io/2021/12/27/Automation-and-Machine-Learning-for-Grid-Power-Use-Minimization-in-Sustainable-Residential-Architecture.html) was defined early on in the project to ensure that work done throughout the remainder of the term was towards a useful conclusion. 
 
 {% include info.html text="Note: The progress made in this area of the report can be found in the first version of the final article. In the introduction and control system sections, purpose, novelty, and scope are addressed." %}
 
@@ -97,7 +97,7 @@ Architecture selection is conditional on the understanding gained from the previ
 
 According to Evins [^evins-21], labelled dataset obtainment is a challenging topic in the field of building energy, so a custom dataset must be generated through computer simulation. The simulation engine used is EnergyPlus, and an understanding of how to construct and run a simulation using the recommended software stack is necessary to generate a quality dada set. 
 
-Howard and Gugger [^howardandgugger-20] explain that model training is subtle, mainly because of the possibility of overtraining or undertraining the model. Experience constructing and training models, gained through completion of the “Practical Deep Learning for Coders”](https://course.fast.ai/) course, will be assets in completing this subsection of the project. 
+Howard and Gugger [^howardandgugger-20] explain that model training is subtle, mainly because of the possibility of overtraining or undertraining the model. Experience constructing and training models, gained through completion of the [*fastai* “Practical Deep Learning for Coders”](https://course.fast.ai/) course, will be assets in completing this subsection of the project. 
 
 Model validation is a critical component in understanding the model’s capabilities. [^howardandgugger-20] An understanding of model evaluation will be important in completing this subsection of the project. This will be gained through completing the [*fastai* “Practical Deep Learning for Coders”](https://course.fast.ai/) course.
 
@@ -113,12 +113,12 @@ Since the dependencies between relevant parameters and what constitutes a labell
 ### 2.4 Discussing the Results <a class="anchor" id="#section_2_4"></a>
 
 There are several points of evaluation and discussion for the results:
-Whether the machine learning control application can reliably reach the indoor temperature setpoint while minimizing the use of grid power.
-Whether there is a notable decrease in energy consumption with automation of windows and blinds and a machine learning control application.
-Whether the automation and machine learning approach studied in this report is more broadly applicable, beyond passive solar homes, and sustainable residential architecture. 
-Whether there are recommendations for continued improvement. 
+* Whether the machine learning control application can reliably reach the indoor temperature setpoint while minimizing the use of grid power.
+* Whether there is a notable decrease in energy consumption with automation of windows and blinds and a machine learning control application.
+* Whether the automation and machine learning approach studied in this report is more broadly applicable, beyond passive solar homes, and sustainable residential architecture. 
+* Whether there are recommendations for continued improvement. 
 
-Bhiladvala [^bhiladvala-21] particularly encourages study and discussion of the automation and machine learning approach in multiple settings in addition to an explicit statement about the benefits it provides. His motivation in providing this advice is that the final article provides a definitive and useful conclusion.
+Bhiladvala [^bhiladvala-21] particularly encourages study and discussion of the automation and machine learning approach in multiple settings, in addition to an explicit statement about the benefits it provides. His motivation in providing this advice is that the final article provides a definitive and useful conclusion.
 
 The discussion and results position of the project has not been addressed at this time. 
 
