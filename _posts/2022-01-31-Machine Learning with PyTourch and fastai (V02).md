@@ -1,4 +1,4 @@
-# Machine Learning with PyTourch and fastai
+# Machine Learning with PyTourch and fastai (V02)
 A collection of notes, mostly from Howard and Gugger’s book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([1](#section_1)) a theoretical introduction and discussion about machine learning, and ([2](#section_2)) a deeper explanation of the methods used in this study.
 
 ## Table of Contents
@@ -10,6 +10,15 @@ A collection of notes, mostly from Howard and Gugger’s book and teachings  [^h
   * [1.5 Model Learning](#section_1_5)
   * [1.6 Overfitting](#section_1_6)
 * [2 Machine Learning Method](#section_2)
+  * [2.1 Coding Environment](#section_2_1)
+  * [2.2 Relevant Python Libraries](#section_2_2)
+  * [2.3 Building and Deploying a Prototype with fastai and PyTorch (*Bear Classifier Computer Vision Example*)](#section_2_3)
+  * [2.4 Stochastic Gradient Descent (*MNIST Handwriting Recognition Example*)](#section_2_4)
+  * [2.5 Expanding SGD to Non-linearity and Building a Neural Network](#section_2_5)
+  * [2.6 Other Computer Vision Problems (*PASCAL Multi-lable BIWI Regression Computer Vision Examples*)](#section_2_6)
+  * [2.7 Tabular Machine Learning with Collaborative Filtering (*MovieLens Collaborative Filtering Example*)](#section_2_7)
+  * [2.8 Tabular Statistical Models: Random Trees to Collaborative Filtering (*Kaggle Bulldozer Tabular Data Example*)](#section_2_8)
+  * [2.9 Natural Language Processing (*IMDb Sentiment Analysis Example*)](#section_2_9)
 * [3 Data Ethics](#section_3)
 * [References](#references)
 
@@ -19,8 +28,10 @@ Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.01 | 2021-11-25 | Initial Draft
 V01, Rev.00 | 2021-12-26 | Midterm Submission
+V01, Rev.01 | 2022-01-30 | *fastai* Course Notes Added (Excluding Data Ethics) [§2.1](#section_2_1)–[.9](#section_2_9)
 
-## 1 Theory of Machine Learning <a class="anchor" id="section_1"></a>
+
+## 1. Theory of Machine Learning <a class="anchor" id="section_1"></a>
 
 In this first section of the current article machine learning is introduced and its applicability and basic functioning are discussed.
 
@@ -75,7 +86,7 @@ Achieving correct model fit is similar to choosing a best-fit curve where increa
 
 Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid overfitting models, saying that in the end, the model needs to work well on data that wasn’t used to train it. 
 
-## 2 Machine Learning Method <a class="anchor" id="section_2"></a>
+## 2. Machine Learning Method <a class="anchor" id="section_2"></a>
 
 The software and hardware proposed by Howard and Grugger, in *Deep Learning for Coders with fastai & PyTorch*, is fastai, Pythorch, and python running on a Linux computer with an NVIDIA GPU. [^howardandgugger-20] Python is a popular successor of the C and C++ programming languages. PyTorch is a “flexible and developer-friendly” tool within the language designed for machine-learning applications. [^howardandgugger-20] And, fastai is a library and API that includes many recent and useful additions to machine learning. [^howardandgugger-20] NVIDIA GPUs most commonly support deep-learning libraries. [^howardandgugger-20] And, running deep-learning applications built with this software stack on Linux machines by-passes many difficulties that may otherwise arise. [^howardandgugger-20]
 
@@ -85,7 +96,7 @@ fastai has four main predefined applications: [^howardandgugger-20]
 3. Tabular
 4. Collaborative Filtering. 
 
-## 3 Data Ethics <a class="anchor" id="section_3"></a>
+## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
 Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
 
