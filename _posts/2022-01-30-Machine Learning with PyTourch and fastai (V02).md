@@ -1,5 +1,5 @@
 # Machine Learning with PyTourch and fastai (V02)
-A collection of notes, mostly from Howard and Gugger’s book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([1](#section_1)) a theoretical introduction and discussion about machine learning, and ([2](#section_2)) a deeper explanation of the methods used in this study.
+A collection of notes, mostly from Howard and Gugger's book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([1](#section_1)) a theoretical introduction and discussion about machine learning, and ([2](#section_2)) a deeper explanation of the methods used in this study.
 
 ## Table of Contents
 * [1 Theory of Machine Learning](#section_1)
@@ -82,9 +82,9 @@ Zeiler and Fergus [^zeilerandfergus-13] have demonstrated the effectiveness of t
 
 Although it is possible to both overtrain or undertrain a model, according to Howard and Gugger [^howardandgugger-20], “the single most important and challenging issue when training for all… algorithms” is overfitting. It occurs when a model has been trained so much that its predictive capacity starts to deteriorate. [^howardandgugger-20]
 
-Achieving correct model fit is similar to choosing a best-fit curve where increasing the degree of a polynomial may get the curve to fit the data more closely; however, at a certain point, either end of the curve might begin going off in directions not representative of the data. And, accordingly, the curve's usefulness in extrapolating the data it represents will deteriorate. There is often a fine line between a curve effectively modelling the data used to create it and accurately approximating data that wasn’t used to create it. Finding this point is the challenge that also exists in avoiding underfitting or overfitting a machine learning model. 
+Achieving correct model fit is similar to choosing a best-fit curve where increasing the degree of a polynomial may get the curve to fit the data more closely; however, at a certain point, either end of the curve might begin going off in directions not representative of the data. And, accordingly, the curve's usefulness in extrapolating the data it represents will deteriorate. There is often a fine line between a curve effectively modelling the data used to create it and accurately approximating data that wasn't used to create it. Finding this point is the challenge that also exists in avoiding underfitting or overfitting a machine learning model. 
 
-Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid overfitting models, saying that in the end, the model needs to work well on data that wasn’t used to train it. 
+Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid overfitting models, saying that in the end, the model needs to work well on data that wasn't used to train it. 
 
 ## 2. Machine Learning Method <a class="anchor" id="section_2"></a>
 
@@ -117,7 +117,7 @@ There are several important configuration steps required to use all of the neces
   from fastbook import *
   from fastai.vision.widgets import *
 ```
-* Google colab allows notebooks and adjacent files to be saved in your google drive in a path that is available with the `gdrive` variable which points to `Path(‘content/gdrive/MyDrive’)`. All adjacent files should be saved to this directory as well. 
+* Google colab allows notebooks and adjacent files to be saved in your google drive in a path that is available with the `gdrive` variable which points to `Path('content/gdrive/MyDrive')`. All adjacent files should be saved to this directory as well. 
 
 
 #### Tips in Google Colab
@@ -183,23 +183,23 @@ For vision models, a good way to obtain data is through Bing Image Search where 
 
 The API key, `###` can then be used in conjunction with the `search_images_bing` function to batch obtain URLs to image search results for a specific search term, `search term`, from the internet:
 ```python
-  key = os.environ.get(‘AZURE_SEARCH_KEY’, ‘###’)
-  results = search_images_bing(key, ‘search term’)
-  ims = results.attrgot(‘content_url’)
+  key = os.environ.get('AZURE_SEARCH_KEY', '###')
+  results = search_images_bing(key, 'search term')
+  ims = results.attrgot('content_url')
 ```
 
 This list of 150 URLs, `ims`, can then be batch downloaded to a specific location using `download_images`. An effective workflow is to obtain the URLs and download for multiple labels all at once. This can be done using a similar scope to this one:
 ```python
-  bear_types = ‘grizzly’, ‘black’, ‘teady’
-  path = Path(‘bears’)
+  bear_types = 'grizzly', 'black', 'teady'
+  path = Path('bears')
 
   if not path.exists():
     path.mkdir()
     for o in bear_types:
       dest = (path/o)
       dest.mkdir(exist_ok = True)
-      results = search_images_bing(key, f’{o} bear’)
-      download _images(dest, urls = results.attrgota(‘contentUrl’))
+      results = search_images_bing(key, f'{o} bear')
+      download _images(dest, urls = results.attrgota('contentUrl'))
 ```
 
 Lastly, corrupt URLs and files can be deleted using the following lines of code:
@@ -211,9 +211,9 @@ Lastly, corrupt URLs and files can be deleted using the following lines of code:
 
 #### Data Loading
 
-`DataLoaders` allows a labelled dataset’s type and structure to be defined within the *fastai* environment. Effectively it is a class that stores `DataLoader` objects and makes them available as `train` and `valid` for training and validation respectively.
+`DataLoaders` allows a labelled dataset's type and structure to be defined within the *fastai* environment. Effectively it is a class that stores `DataLoader` objects and makes them available as `train` and `valid` for training and validation respectively.
 
-The Data Block API is an effective way to customize all steps of creation within the data loading process from how the data is labelled and stored to how it is presented to the kernel. The API can be better understood using an example from Howard and Gugger’s teaching material:
+The Data Block API is an effective way to customize all steps of creation within the data loading process from how the data is labelled and stored to how it is presented to the kernel. The API can be better understood using an example from Howard and Gugger's teaching material:
 ```python
   bears = DataBlock(
     blocks = (ImageBlock, CategoryBlock), 
@@ -283,12 +283,12 @@ The *fastai* and *PyTorch* methods that Howard and Gugger recommend using export
 
 To use for inference (ie. to generate a prediction), an inference learner must be created using `load_learner`:
 ```python
-  learn_inf = load_learner(path/’export.pkl’)
+  learn_inf = load_learner(path/'export.pkl')
 ```
 
 An inference can then be called on a single image, `image.jpg`, using the `.predict()` method:
 ```python
-  learn_inf.predict(‘path/image.jpg’)
+  learn_inf.predict('path/image.jpg')
 ```
 
 #### Deployment
@@ -320,12 +320,12 @@ The following code is needed to store the uploaded files into an array.
 **Lables** can be used to display text widgets with specific information:
 ```python
   lbl_pred = widgets.Label()
-  lbl_pred.value = f’Prediction: {pred}; Probability: {probs[pred_idx]:.04f}’
+  lbl_pred.value = f'Prediction: {pred}; Probability: {probs[pred_idx]:.04f}'
   lbl_pred
 ```
 Other buttons, such as a **classification button** to generate a prediction and classify an image, can also be made:
 ```python
-  btn_run = widgets.Button(description = ‘Classify’)
+  btn_run = widgets.Button(description = 'Classify')
   btn_run
 ```
 However, buttons with a specific, custom purpose need event handlers—code that runs when they are pressed. 
@@ -335,13 +335,13 @@ However, buttons with a specific, custom purpose need event handlers—code that
   out_pl.clear_output()
   with out_pl: display(img.to_thumb(128, 128))
     pred, pred_idx, probs = learn_inf.predict(img)
-    lbl_pred.value = f’Prediciton: {pred}; Probability: {probs[pred_idx]:.04f}
+    lbl_pred.value = f'Prediciton: {pred}; Probability: {probs[pred_idx]:.04f}
 
   btn_run.on_click(on_click_classify
 ```
 Widgets can be grouped vertically, using the **vertical widget grouping** functionality:
 ```python
-  VBox([widgets.Label(‘Select your bear’), btn_upload, btn_run, out_pl, lbl_pred
+  VBox([widgets.Label('Select your bear'), btn_upload, btn_run, out_pl, lbl_pred
 ```
 
 ####  Publishing a Prototype Application
@@ -395,7 +395,7 @@ The learner is called with the following code:
 
 When the learner is called, a tensor indicating the probabilities of an image being in each category is returned. The tensor has the following form:
 ```python
-  (‘object’, tensor(i), tensor(x, y, x, ...)
+  ('object', tensor(i), tensor(x, y, x, ...)
 ```
 * `object` indicates the prediction the model made for the current incidence of the class.
 * `i` indicates the index of the value in the tensor of probabilities which corresponds to the `object`.
