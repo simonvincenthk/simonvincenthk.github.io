@@ -157,9 +157,10 @@ Many operations can be applied to arrays and tensors, but care should be taken t
 Howard and Gugger, inform their students that in *PyTorch* when the gradient of a variable is required, the `.reguires_grad_()` method must be called each time that variable is altered or an operation is performed on it. This method changes the type of the variable to include information about how to take its derivative. For example, consider the following:
 ```python
   def f(x): return x**2
-	 xt = tensor(3.).requires_grad_()
+    xt = tensor(3.).requires_grad_()
+	 
   yt = f(xt)
-	 yt
+  yt
 ```
 
 Here, the type of `yt` is `tensor(9., grad_fn = <powBackward0>)`. And, to take the derivative with respect to `xt`, or the “gradient” the following lines of code can be used:
@@ -173,6 +174,239 @@ This yields `tensor(6.0)` which is the derivative of `yt` with respect to `xt`, 
 #### Broadcasting 
 
 Broadcasting allows operations to be performed on tensors with different shapes. This is done by “expand[ing] the tensor with smaller rank to have the same size as the one with larger rank”. This is powerful; however, in practice, it is recommended to check the shapes of tensors throughout the development process to confirm that variables are what is expected. 
+
+### 2.3 Building and Deploying a Prototype with fastai and PyTorch (Bear Classifier Computer Vision Example)  <a class="anchor" id="#section_2_3"></a>
+
+#### Data Optainment for Computer Vision
+
+For vision models, a good way to obtain data is through Bing Image Search where batches of image search results can be downloaded at one time. To do this, a bing image search API key must be obtained from (Microsoft Azure)[https://www.microsoft.com/en-us/bing/apis/bing-web-search-api]
+
+The API key, `###` can then be used in conjunction with the `search_images_bing` function to batch obtain URLs to image search results for a specific search term, `search term`, from the internet:
+```python
+  key = os.environ.get(‘AZURE_SEARCH_KEY’, ‘###’)
+  results = search_images_bing(key, ‘search term’)
+  ims = results.attrgot(‘content_url’)
+```
+
+This list of 150 URLs, `ims`, can then be batch downloaded to a specific location using `download_images`. An effective workflow is to obtain the URLs and download for multiple labels all at once. This can be done using a similar scope to this one:
+```python
+  bear_types = ‘grizzly’, ‘black’, ‘teady’
+  path = Path(‘bears’)
+
+  if not path.exists():
+    path.mkdir()
+    for o in bear_types:
+      dest = (path/o)
+      dest.mkdir(exist_ok = True)
+      results = search_images_bing(key, f’{o} bear’)
+      download _images(dest, urls = results.attrgota(‘contentUrl’))
+```
+
+Lastly, corrupt URLs and files can be deleted using the following lines of code:
+```python 
+  fns = get_image_files(path)
+  failed = verify_images(fns)
+  failed.map(Path.unlink)
+```
+
+#### Data Loading
+
+`DataLoaders` allows a labelled dataset’s type and structure to be defined within the *fastai* environment. Effectively it is a class that stores `DataLoader` objects and makes them available as `train` and `valid` for training and validation respectively.
+
+The Data Block API is an effective way to customize all steps of creation within the data loading process from how the data is labelled and stored to how it is presented to the kernel. The API can be better understood using an example from Howard and Gugger’s teaching material:
+```python
+  bears = DataBlock(
+    blocks = (ImageBlock, CategoryBlock), 
+    get_items = get_image_files, 
+    splitter = RandomSplitter(valid_pct=0.2, seed=42),
+    get_y = parent_label,
+    item_tfms = Resize(128))
+```
+The `blocks=(ImageBlock, CategoryBlock)` line allows the types of the independent and dependent variables to be defined, where the independent variable is the data that will be analyzed by the completed model and the dependent variables are the labels and predictions that will be generated. 
+
+The `get_items=get_image_files` line allows a function with which the data is taken from its source to be defined. In this case, it is a predefined function that has already been given the file path where the images can be found. 
+
+The `splitter=RandomSplitter(valid_pct=0.2, seed=42)` line allows the quantity and location of the validation data points within the labelled dataset to be defined. In the example above, the 20% of the data in the labelled set (`valid_pct=0.2`) is set aside for validation randomly using the `RandomSplitter` and a constant randomization seed (`seed=42`) so that the validation set is repeatable between models. 
+
+The `get_y=parent_label` line allows a function with which the label will be taken and assigned for each file to be defined. In this example, a function (`parent_label`) is used that takes the parent in the directory path (the folder the file is stored in) as the label and assigns it. This is a common method. 
+
+Lastly, the `item_tfms=Resize(128)` line allows a format to be applied to all of the data. In this example, all images are given the same size by cropping them. 
+
+#### Data Augmentation
+
+In computer vision models all images must have the same format. Accordingly, `DataLoaders` has the capability of giving all images the same dimensions using several methods:
+* `Resize(<x>)` gives all images `x`-pixel height and width by copping to the largest square that fits in the center of the original image. 
+* `Resize(<x>, ResizeMethod.Squish)' gives all images `x`-pixel height and width by retaining the short edge of the original image and squishing the long edge to the same dimension. 
+* `Resize(<x>, ResizeMethod.Pad)` gives all images `x`-pixel height and width by retaining the long edge of the original image and padding either side to give the short edge the same dimension. 
+* 
+Each method has its own benefits and consequences. 
+
+The most common technique used is random data augmentation each time:
+```python
+  RandomResizedCrop(x, min_scale=y)  
+```
+With this technique, a different `x`-pixel high and wide square at least `y*100`-percent of the original image. Because the augmentation of the image changes each time the model uses it, overfitting is much less likely to occur. Hence why this technique is so popular.
+
+#### Data Cleaning
+
+Often it is wise to clean the labelled data after some training has been done. This is because the model has already done a relatively good job predicting the data given an imperfect labelled data set. The probabilities of an image being in a certain category can be used to pick out the images that the model was least sure about and check that they are labelled correctly.
+
+For computer vision, *fastai* has a small GUI to clean data: 
+```python
+  cleaner = ImageClassifierCleaner
+  cleaner
+```
+This GUI renders images in order from least-certain to most-certain for a given label and allows the user to delete or relabel those data points. By running the following code, these changes are saved to the data-set directly:
+```python
+  for idx in cleaner.delete(): cleaner.fns[idx].unlink()
+  for idx, cat in cleaner.change(): shutil.move(str(cleaner.fns[idx]),path/cat) 
+```
+
+Another common practice is to apply batch augmentations so that multiple images can be augmented at once on the GPU using `batch_tfms = aug_transforms(mult = 2)`. An example is 
+```python
+  Bears = bears.new(item_tfms=Resize(128), batch_tfms = aug_transforms(mult = 2))
+  dls = bears.dataloaders(path)
+  dls.train.show_batch(max_n=8, nrows=2, unique=True)
+```
+In this example, the `.new()` method creates a new instance of bears with the parameters passed in. The second and third lines are used to display the augmented data. 
+
+#### Exporting a Model
+
+A model can be used for inference—to generate predictions—once it has been trained, validated, and tested. At this point, it is effectively a neural network computer program with statistical weights adjusted specifically to the unique dataset it was trained on. If the model is exported in the correct form, it can be run on a server different than the one it was built and trained on. This can be beneficial for deployment.
+
+The *fastai* and *PyTorch* methods that Howard and Gugger recommend using export both the architecture and the parameters of the model. Additionally, this method saves details about how DataLoaders was defined. So, effectively, results are made repeatable on different servers using this method. Calling `export` generates a file called *export. pkl* that contains all of this information:
+```python
+  learn.export()
+```
+
+#### Getting Predictions/Using the Exported Model
+
+To use for inference (ie. to generate a prediction), an inference learner must be created using `load_learner`:
+```python
+  learn_inf = load_learner(path/’export.pkl’)
+```
+
+An inference can then be called on a single image, `image.jpg`, using the `.predict()` method:
+```python
+  learn_inf.predict(‘path/image.jpg’)
+```
+
+#### Deployment
+
+There are two tools for Google Colab which allow graphical elements, linked to the scripts in code cells, to be added and code cells to be hidden:
+IPython widgets (ipywidgets) – provide the ability to add graphical elements.
+Voilà – provides the ability to hide specific code cells. 
+
+{% include alert.html text="Add note about what lines need to be called to include these libraries" %}
+
+Here is a list of several elements that can be added with the combination of these tools:
+One useful widget that can be added with IPython is an **image upload button**:
+```python
+  btn_upload = widgets.FileUpload()
+```
+The following code is needed to store the uploaded files into an array. 
+```python
+  img = PILImage.creat(btn_upload.data[-1])
+  img
+```
+
+**Output** widgets allow images that have been uploaded and processed to be displayed:
+```python
+  out_pl = widgets.Output()
+  out_pl.clear_output()
+  with out_pl: display(img.to_thumb(128,128))
+  out_pl
+```
+**Lables** can be used to display text widgets with specific information:
+```python
+  lbl_pred = widgets.Label()
+  lbl_pred.value = f’Prediction: {pred}; Probability: {probs[pred_idx]:.04f}’
+  lbl_pred
+```
+Other buttons, such as a **classification button** to generate a prediction and classify an image, can also be made:
+```python
+  btn_run = widgets.Button(description = ‘Classify’)
+  btn_run
+```
+However, buttons with a specific, custom purpose need event handlers—code that runs when they are pressed. 
+```python
+  def on_click_classify(change):
+  img = PILImage.create(btn_upload.data[-1])
+  out_pl.clear_output()
+  with out_pl: display(img.to_thumb(128, 128))
+    pred, pred_idx, probs = learn_inf.predict(img)
+    lbl_pred.value = f’Prediciton: {pred}; Probability: {probs[pred_idx]:.04f}
+
+  btn_run.on_click(on_click_classify
+```
+Widgets can be grouped vertically, using the **vertical widget grouping** functionality:
+```python
+  VBox([widgets.Label(‘Select your bear’), btn_upload, btn_run, out_pl, lbl_pred
+```
+
+####  Publishing a Prototype Application
+ 
+Howard and Gugger recommend a method of publishing a prototype application for free using (*Binder*)[https://mybinder.org]. The benefits of this method are that it creates a web application where the inference is done on a remote server; the drawbacks are that the inference is performed on a CPU instead of a GPU, and is not ideal for processing large amounts of data in a short period.
+
+The steps outlined in Howard and Gugger’s book are as follows:
+1. “Add your notebook to a GitHub repository (*http://github.com*).
+2. Past the URL of that repo into Binder’s URL field…
+3. Change the FIle drop-down to instead select URL. 
+4. In the “URL to open” field, enter `/voila/render/name.ipynb` (replacing `name` with the name of your notebook).
+5. Click the cupboard button at the bottom right to copy the URL and past it somewhere safe. 
+6. Click Launch.”
+
+#### Safe Project Roll-Out
+
+Howard and Gugger stress safe project rollout and suggest a framework:
+
+1. Manual Process – During this phase, run the model in parallel with human verification.
+2. Limited Scope Deployment – During this phase, deploy the model in a low-consequence subset of the final application.
+3. Gradual Expansion – During this phase, expand gradually and cautiously from limited-scope deployment to full-scope deployment. 
+
+During the roll-out process, errors should be anticipated by looking at and interpreting the data. 
+
+One large potential issue is feedback loops where input data biases the predictions being made, and the predictions being made bias the input data is processed. There is a risk of feedback loops occurring if the model controls what the next round of data will be like. The most effective way to avoid feedback loops is by implementing human circuit breakers. Human intervention allows the data to be interpreted in a way that it cannot be by the model. And, as a result, unexpected or undesirable results can provide the impetus to stop the model and change it. 
+
+#### Error Analysis
+
+Some models will have an uploader:
+```python
+  uploader = widgets.FileUploader()
+```
+
+More information about a function can be displayed by running the following script:
+```python
+  Doc(<function name>)
+```
+
+The following is an example of a learner:
+```python
+  learn = cnn_learner(dls, resnet34, metrics = error rate)
+```
+
+`valid_pct = <x>` indicates what percentage, `x`, of the labeled data-set is reserved for validation. 
+
+The learner is called with the following code:
+```python
+  learn_inf.predict(img_name)
+```
+`img_name` is the name of the image.
+
+When the learner is called, a tensor indicating the probabilities of an image being in each category is returned. The tensor has the following form:
+```python
+  (‘object’, tensor(i), tensor(x, y, x, ...)
+```
+* `object` indicates the prediction the model made for the current incidence of the class.
+* `i` indicates the index of the value in the tensor of probabilities which corresponds to the `object`.
+* `x, y, x, …` is the tensor of probabilities that the current `object` is in each of the classifications.
+In this example, the model predicted that the image is a grizzly bear instead of a black bear or a teddy bear:
+```python
+('grizzly', tensor(1), tensor([9.0767e-06, 9.9999e-01, 1.5748e-07]))
+```
+By looking at this data returned by the learner, it is easy to recognize that the probability of the image being a grizzly far exceeds the probabilities of it being one of the other categorizations.
+
+The `.vocab()` method can be called to display the mapping between objects in a class and their values or for indices in an array and their values.
 
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
