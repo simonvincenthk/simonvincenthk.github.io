@@ -19,6 +19,7 @@ A collection of notes, mostly from Howard and Gugger's book and teachings  [^how
   * [2.7 Tabular Machine Learning with Collaborative Filtering (*MovieLens Collaborative Filtering Example*)](#section_2_7)
   * [2.8 Tabular Statistical Models: Random Trees to Collaborative Filtering (*Kaggle Bulldozer Tabular Data Example*)](#section_2_8)
   * [2.9 Natural Language Processing (*IMDb Sentiment Analysis Example*)](#section_2_9)
+  * [2.10 Reccurent Nueral Networks (*Human Numbers RNN Example*)](#section_2_10) 
 * [3 Data Ethics](#section_3)
 * [References](#references)
 
