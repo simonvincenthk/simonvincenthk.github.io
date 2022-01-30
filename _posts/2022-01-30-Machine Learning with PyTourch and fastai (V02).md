@@ -1,5 +1,7 @@
 # Machine Learning with PyTourch and fastai (V02)
-A collection of notes, mostly from Howard and Gugger's book and teachings  [^howardandgugger-20], aimed at giving the layperson context about and an understanding of the machine learning used in this study. It is broken up into two primary subsections: ([1](#section_1)) a theoretical introduction and discussion about machine learning, and ([2](#section_2)) a deeper explanation of the methods used in this study.
+A collection of notes, mostly from Howard and Gugger's book and teachings [^howardandgugger-20], for the author's personal used but whih may also give the layperson context about and an understanding of the machine learning. The artilcle is broken up into two primary subsections: ([1](#section_1)) a theoretical introduction and discussion about machine learning, and ([2](#section_2)) a deeper explanation of the methods used in this study.
+
+{% include alert.html text="Please note that for the current version of this article, citations are neither consistant nor complete. However all-uncited writing is derived from Howard and Gugger's [^howardandgugger-20](*fastai* "Practical Deep Learning for Coders" course) and book." %}
 
 ## Table of Contents
 * [1 Theory of Machine Learning](#section_1)
