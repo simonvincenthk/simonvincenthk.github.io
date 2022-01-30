@@ -88,6 +88,8 @@ Howard and Gugger [^howardandgugger-20] make a compelling argument to avoid over
 
 ## 2. Machine Learning Method <a class="anchor" id="section_2"></a>
 
+There are different environments in which to practice Machine Learning. Howard and Gugger recommend a notebook that allows users to execute python code cells on a remote GPU for speed and efficiency. Regardless of the environment chosen, practical skills are equally as important as a theoretical understanding of the subject matter. In this section, some of the methods used and recommended by Howard and Gugger are discussed. 
+
 The software and hardware proposed by Howard and Grugger, in *Deep Learning for Coders with fastai & PyTorch*, is fastai, Pythorch, and python running on a Linux computer with an NVIDIA GPU. [^howardandgugger-20] Python is a popular successor of the C and C++ programming languages. PyTorch is a “flexible and developer-friendly” tool within the language designed for machine-learning applications. [^howardandgugger-20] And, fastai is a library and API that includes many recent and useful additions to machine learning. [^howardandgugger-20] NVIDIA GPUs most commonly support deep-learning libraries. [^howardandgugger-20] And, running deep-learning applications built with this software stack on Linux machines by-passes many difficulties that may otherwise arise. [^howardandgugger-20]
 
 fastai has four main predefined applications: [^howardandgugger-20] 
@@ -95,6 +97,82 @@ fastai has four main predefined applications: [^howardandgugger-20]
 2. Text
 3. Tabular
 4. Collaborative Filtering. 
+
+### 2.1 Coding Environemnt <a class="anchor" id="#section_2_1"></a>
+
+Google Colab is used for model development because it is a free service that allows Jupyter Notebooks to be run on remote GPU servers. The server that executes the python scripts in code cells of a notebook is called the “kernel”, the status of which can be seen in the upper right-hand corner of a notebook. Code in each cell runs as a script, but one of the advantages of Jupyter Notebooks running on Google Colab is that data created or used in one cell can be used in another. 
+
+In general, there are two fundamental modes in Google Colab: (1) edit mode, and (2) command mode. In edit mode, text or code can be entered into cells in the usual way. A green border around a cell indicates that the notebook is in edit mode. In command mode, keys have a specific purpose. (A few of these purposes will be discussed in the Tips subsection bellow.) A red border around a cell indicates that the notebook is in command mode. 
+
+There are several important configuration steps required to use all of the necessary functionality and a few tips about running and editing code and text cells.
+
+#### Configuring Google Colab
+
+* Specify that code cells should run on a remote GPU by selecting “Runtime > Change Runtime Type” on the top menu bar and changing “Hardware Accelerator” to “GPU”.
+* For any notebook using *fastai* libraries, `fastbook` must be updated and installed. This is done with two lines of code:
+```python
+  !pip install -Uqq fastbook
+  import fastbook 
+  fastbook.setup_book()
+  from fastbook import *
+  from fastai.vision.widgets import *
+```
+* Google colab allows notebooks and adjacent files to be saved in your google drive in a path that is available with the `gdrive` variable which points to `Path(‘content/gdrive/MyDrive’)`. All adjacent files should be saved to this directory as well. 
+
+
+#### Tips in Google Colab
+
+The following is a list of a few useful commands in Google Colab:
+* `esc`: puts the notebook into command mode
+* `enter`: puts the notebook into edit mode
+* `ctrl` + `/`: comment/uncomment (in command mode)
+* `shift` + `enter`: runs the script in the current cell (in command mode)
+* `h`: provides a list of keyboard shortcuts (in command mode)
+* `s`: saves the notebook (in command mode)
+* `up arrow` or `down arrow`: toggles between cells (in command mode)
+* `b`: creates a new cell (in command mode)
+
+### 2.2 Relevant Python Libraries <a class="anchor" id="#section_2_2"></a>
+
+#### Tensors
+
+Where Python, and the *NumPy* library, in particular, uses `arrays`; *PyTorch* uses `tensors`. The type is very similar but adds the ability for it to be processed on a server's GPU and not just its CPU. This is particularly useful in machine learning because of the quantity and types of computations done during training. 
+
+Tensors are defined and indexed the same way arrays are:
+```python
+  data = [[1, 2, 3], [4, 5, 6]] 
+  arr = array(data)
+  tns = tensor(data)
+```
+
+The first item in both the array and the tensor above are indexed at `0`, so `arr[0]` and `tns[0]` respectively. To index through every column of the first row in a 2D array or tensor, `arr[1, :]` or `tns[1, :]` is the right syntax; likewise, to index through every row in the first column of a 2D array or tensor, `arr[:, 1]` or `tns[:, 1]` is the correct syntax. `arr[1, 1:3]` or `tns[1, 1:3]` is the index syntax for the second column up to but not including the fourth column in the first row, for a 2D array or tensor. The `-1` element is the last element in an array or tensor. 
+
+Many operations can be applied to arrays and tensors, but care should be taken to distinguish between vector and term-wise operations. A few examples are as follows:
+* `tns + 1` adds one to each term.
+* `tns * 1.5` multiplies each term by 1.5 and changes their type to `float`.
+* `tns.type()` returns the type of the entries.
+
+#### Gradients
+
+Howard and Gugger, inform their students that in *PyTorch* when the gradient of a variable is required, the `.reguires_grad_()` method must be called each time that variable is altered or an operation is performed on it. This method changes the type of the variable to include information about how to take its derivative. For example, consider the following:
+```python
+  def f(x): return x**2
+	 xt = tensor(3.).requires_grad_()
+  yt = f(xt)
+	 yt
+```
+
+Here, the type of `yt` is `tensor(9., grad_fn = <powBackward0>)`. And, to take the derivative with respect to `xt`, or the “gradient” the following lines of code can be used:
+```python
+  yt.backward()
+  xt.grad()
+```
+
+This yields `tensor(6.0)` which is the derivative of `yt` with respect to `xt`, evaluated at `xt` $=3$.
+
+#### Broadcasting 
+
+Broadcasting allows operations to be performed on tensors with different shapes. This is done by “expand[ing] the tensor with smaller rank to have the same size as the one with larger rank”. This is powerful; however, in practice, it is recommended to check the shapes of tensors throughout the development process to confirm that variables are what is expected. 
 
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
