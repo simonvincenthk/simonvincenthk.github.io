@@ -29,7 +29,7 @@ Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.01 | 2021-11-25 | Initial Draft
 V01, Rev.00 | 2021-12-26 | Midterm Submission
-V01, Rev.01 | 2022-01-30 | *fastai* Course Notes Added (Excluding Data Ethics) [§2.1](#section_2_1)–[.9](#section_2_9)
+V01, Rev.01 | 2022-01-30 | *fastai* Course Notes Added (Excluding Data Ethics) §[2.1](#section_2_1)–[.10](#section_2_10)
 
 
 ## 1. Theory of Machine Learning <a class="anchor" id="section_1"></a>
