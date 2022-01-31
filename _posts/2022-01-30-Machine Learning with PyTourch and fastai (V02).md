@@ -2309,6 +2309,290 @@ A summary of approaches for tabular modelling presented by Howard and Gugger:
 * **Gradient boosting machines**, in theory, is just as fast to train as random forests, but in practice [many different hyperparameters must be tried]. They can overfit. But they are often a bit more accurate than random forests. 
 * **Neural Networks** take the longest time to train, and require extra procession such as normalization.; this normalization needs to be used at inference time as well. They can provide great results, and extrapolate well, but only when [hyperparameters are treated carefully], and [care is taken to avoid overfitting].”
 
+### 2.9 Natural Language Processing (*IMDb Sentiment Analysis Example*) <a class="anchor" id="#section_2_9"></a>                                                                                                                                                                                                                                                                                                                                                                     
+
+Natural language processing is an application of machine learning that allows written data to be interpreted, such as whether a movie review is positive or negative. This type of interpretation is called “sentiment analysis”. The model that does this is performing binary classification.
+
+There are pre-trained models for these applications. They are pre-trained language models that are trained on predicting the next word of a sentence. The data that was used for these *fastai* pre-trained models were Wikipedia articles. Pretraining a language model allows a model to learn sentence structure. 
+
+One of these pre-trained models can be fine-tuned for a range of applications:
+```python
+from fastai2.text.all import*
+
+dls = TextDataLoaders.from_folder(untar_data(URLs.IMDB, valid = ‘test’)
+learn = text_classifier_learner(dls, AWD_LSTM, drop_mult = 0.5, metrics = accuracy)
+learn.fine_tune(4, 1e-2)
+```
+
+This first round of fine-tuning a linguistic pre-trained model for sentiment analysis results in 93% accuracy. Results can be improved further by training a Wikipedia language predictor on movie reviews before moving on to sentiment analysis.
+
+#### Text Processing
+
+A language model must account for various sentence and document lengths. Words are treated as categorical variables. The following procedure is presented by Howard and Gugger:
+1. “Make a list of all possible levels of [the] categorical variable (...the *vocab*),
+2. replace each level with its index in the vocab,
+3. create an embedding matrix for this containing a row for each level (i.e. for each item of the vocab),
+4. Use this embedding matrix as the first layer in a neural network.
+
+(A dedicated embedding matrix can take as input the raw vocab indexes created in step two; this is equivalent to but faster and more efficient, than a matrix which takes as input one-hot encoded vectors representing the indexes.)”
+
+To create a vocab list of all the levels of the discrete categorical independent variable, concatenate all documents into one long string, and partition it into words. For a language predictor, the independent variable becomes the first word ending with the second-to-last, and the dependant variable becomes the second word ending with the last. Effectively, the model learns to predict the next word in a string of words based on the previous word.
+
+When creating a vobcab for retraining a model, some of the words will have appeared in the original training set; others will be completely new. In retraining, existing worlds will maintain the same latent values from pretraining, and new ones will be assigned a vector of random latent values.
+
+The following operations must be performed:
+* “**Tokenization**: convert the text into a loss of words (or characters, or substrings, depending on the granularity of [the] model)
+* **Numericalization**: make a list of all the unique words which appear (the vocab), and convert each word into a number, by looking up its index in the vocab
+* **Language model data loader** criterion: *fastai* provides an `LMDataLoader` class which automatically handles creating a dependant variable with is offset from the independent variable by one token. It also handles some important details, such as how to shuffle the training data in such a way that the dependant and independent variables maintain their structure as required. 
+* **Language model** criterion: we need a special kind of model which does something [unique]: handles input lists which could be arbitrarily big or small. There are a number of ways to do this; [Howard and Gugger present the use of] a *recurrent neural network*.” 
+
+#### Tokenization
+
+Breaking up a document into “tokens” is nuanced. What constitutes a token? Punctuation? Hyphenated world? Etc?
+
+According to Howard and Gugger, there are three common approaches:
+* “**Word-based**: split a sentence on spaces, as well as applying language-specific rules to try to separate parts of meaning, even when there are no spaces, such as turning “don’t” into “do n’t”. Generally, punctuation marks are also split into separate tokens.
+* **Subword based**: split words into smaller parts, based on the most commonly occurring substrings. For instance, “occasion: might be tokenized as “o c ca sion”,
+* **Character-based**: split a sentence based on individual characters.”
+
+Subword tokenization is used in the following examples. *fastai* provides a consistent interface for tokenizers defined in other libraries. They must be included:
+```python
+from fastai2.text.all import *
+path = untar_data(URLs.IMBD)
+```
+
+All text files are grabbed:
+```python
+files = get_text_files(path, folders = ‘train’, ‘test’, ‘unsup’])
+```
+
+The default english word tokenizer used is called *spaCy* which uses a sophisticated set of rules for tokenization. Instead of using `SpacyTokenizer` directly, `WordTokenizer`, which points to *fastai*s default tokenizaer is used:
+```python
+spacy = WordTokenizer()
+toks = first(spacy([txt]))
+print(coll_repr9toks, 30))
+```
+This shows the tokenization, using the default method. The method can be called on other, more complex, strings of text as well:
+```python
+first(spacy([‘The U.S. dolar $1 is $1.00.’]))
+```
+
+*fastai* provides the `Tokenizer` class which adds functionality to any tokenizer:
+```python
+tkn = Tokenizer(spacy)
+print(coll_repr(tkn(txt), 31))
+```
+`Tokenizer` replaces all words with upper-case first letters with the same word with a lower-case first letter, and adds an identifier before that word. This ensures that only one discrete level is added for a word regardless of whether it is capitalized or not. Several other rules work similarly.
+
+Subword tokenization becomes particularly relevant in other languages. It is done by learning commonly-occurring groupings of letters. 
+
+Consider 2000 movie reviews:
+```python
+txts = L(o.open().read() for o in foles[:2000])
+```
+
+A subword tokenizer is created with the default `SubwordTokenier` which is set-uup with the `.setup()` method and pretrained on some `texts`:
+```python
+def subword(sz):
+	sp = SubwordTokenizer(vocab_sz = sz)
+	sp.setup(txts)
+	return ‘ ‘_.join(first(sp([txt]))[:40])
+```
+
+Testing this function, it can be seen that spaces are replaced by a long underscore symbol:
+```python
+subword(1000)
+```
+
+#### Numericalization
+
+Once a string of text has been tokenized, it must be numericalized. Similarly to `SubwordTokenizer`, `.setup()` method must be called to creat a vocab:
+```python
+num = Numericalize()
+num.setup(toks200)
+coll_repr(num.vocab, 20)
+```
+
+Using this method of numericalization, the identifiers are indexed first, then the English tokens in order of descending frequency. A maximum number of discrete levels can be defined above which, the least frequent discrete levels will be replaced by `xxunk`. By default, this is set to `max_vocab = 60000`. A minimum number of appearances below which a word is replaced by `xxunk` can also be defined. By default it is set to `min_freq = 3`. Both of these features help avoid the creation of overly-large, -complicated embedding matrices.
+
+Now, numericalization can be done by passing a list of words as the `vocab` parameter.
+
+This will show the numerical values corresponding with each token in a string:
+```python
+nums = num(toks)[:20]; nums
+```
+
+This will show the words corresponding with each numericalized discrete token:
+```python
+‘ ‘.join(num.vocab[o] for o in  nums)
+```	
+
+#### Assigning Batches for a Language Model
+ 
+To break a string of 90 tokens up into six batches,m it is separated into six lines (rows) of 15 contiguous parts.
+
+For larger strings of text, batch assignment is done by filling one row in each mini-batch before looping back to fill the second row of each mini-batch, and so forth. `LMDataLoader` can be used to do this automatically:
+```python
+nums200 = toks200.map(num)
+dl = LMDataLoader(nums200)
+```
+
+The default mini-batch has 64 rows of sequences (rows) of 72 tokens each.
+
+The independent variable can be compared with the dependant variables now. The independent variables are produced first:
+```python
+‘ ‘.join(num.vocab[o] for o in x[0][:20]
+```
+```
+‘xxbos xxmaj this movie , which i just xxunk at the video store, has apparently sit around for a’
+```
+Then, the dependent variables follow, off-set my one:
+```python
+‘ ‘.join(num.vocab[o] for o in y[0][:20]
+```
+```
+‘xxmaj this movie , which i just xxunk at the video store, has apparently sit around for a couple’
+```
+
+#### Training a Text Classifier
+
+Training can be done with a `DataBlock`:
+```python
+get_imdb = partial(get_text_files, folders = [‘train’, ‘test’, ‘unsup’]
+
+dls_lm = DataBlock(
+	blocsk = TextBlcok.from_folder(path, is_lm = True)
+	get_items = get_imdb, splitter = RandomSplitter(0.1)
+).dataloaders(path, path = path, bs =128, seq_len = 80)
+```
+
+The data block is `TextBlock` from the folder pointed to by `path`. The texts are files from the folders in the `folders` string. The tokenization is, saved at this `path` location as well. 
+
+Calling `show_batch` reveals that the dependant variable is the same string of words as the independent variable, just offset by one item.
+
+#### Learner Fine-Tuning
+
+The model is fine-tuned by using the learner to train the model to predict the next word in a string based on the previous word:
+```python
+learn = language_model_learner(
+	dls_lm, AWD_LSTM, drop_mult = 0.3,
+	metrics = [accuracy, Perplexity()].to_fp16()
+```
+* `lds_lm` is the `DataLoaders` for the language model.
+* `AWD_LSTM` is the pre-trained model. 
+* `drop_out` (will be covered later)
+* `metrics` provide quantitative measures of the model’s performance for interpretation.
+* `.to_fp16()` creates less memory for the GPU and increases run speed.
+
+One epoch of fitting is applied:
+```python
+ learn.fit_one_cycle(1, 2e-2)
+```
+Freezing is included in `.fit_one_cycle()` by default, so fitting will automatically only retrain the new latent values added to the embedding matrices.
+
+##### Saving and Loading Models
+
+Models can be easily saved in their current state with the following code:
+```python
+learn.save(‘1epoch’)
+```
+Likewise, they can be loaded from the same place it was saved as follows:
+```python
+learn.load(‘1epoch’)
+```
+
+Unfreezing and retraining for 10 more cycles increases the accuracy to 34%:
+```python
+learn.unfreeze()
+learn.fit_one_cycle(10, 2e-3)
+```
+
+The fine-tuned model without the final layer which picks out words is called an “encoder” and is saved with the `.save_encoder()` method:
+```python
+learn.save_encoder(‘finetuned’)
+```
+
+#### Text Generation
+
+Before fine tuning the model in its current state again for sentiment classification, it can be used to enerate random reviews:
+```python
+TEXT = “I liked this movie because”
+N_WORDS = 40
+N_SENTENCES = 2
+preds = [learn.predict(TEXT, N_WORDS, temperature = 0.75) for _ in range(N_SENTENCES)]
+
+print(“\n”.join(preds))
+```
+This generates two cohesive movie reviews. There are, however, more sophisticated and better ways to generate language. 
+
+#### Creating the classifier DataLoaders
+
+Now, the language-pretrained model, can be traied on sentiment analysis:
+```python
+dls_class = DataBlock(
+	blocks = (TextBlock.from_folder(path, vocab = dls_lm.vocab), CatagoryBlock),
+	get_y = parent_label,
+	get_items = partial(get_text_files, folders = [‘train’, ‘test’]),
+	splitter = GrandparentSplitter(valid_name = ‘test’)
+).dataloaders(path, path = path, bs = 128, seq_len = 72)
+```
+Instead of creating a new `vocab` of unique words, the `DataBlock` is assigned the `dls_lm.vocab` created in the language training phase. Additionally, `TextBlock.from_folder` excludes `is_lm = True`.
+
+Showing the batch reveals that the reviews are broken up into equally-sized batches along with a `pos` or `neg` category as their dependant variables:
+```python
+dls_class.show_batch(max_n = 3)
+```
+
+For sentiment analysis training, batches are assigned differently. Each dependant categorical variable must remain associated with its original independent movie review. An issue may arise when a batch size of 128 words is used for movie reviews which may span 2000 words or more.
+
+To study this potential issue more deeply, a mini-batch containing the first 10 documents is created and the number of token that each movie review has is returned:
+```python
+nums_samp = toks200[:10].map(num)
+nums=samp.map(len)
+```
+They vary between 100 and 600 words in length. They can be split up into sequences of 72 words in length, but the number of sequences in each batch will vary. This issue is solved by “padding” each of the data batches so that they are the same length. *fastai* sorts the documents (reviews) so that each mini-batch that is pushed to the GPU has similar length documents all padded to have the same dimension while minimizing the amount of padding used. All of this happens automatically when a `DataLoader` is used for natural language data.
+
+A learner for classification can be created:
+```python
+learn = text_classifier_learner(dls_class, AWD_LSTM, drop_mult = 0.5, metrics = accuracy).to_fp16()
+```
+
+The pre-trained model for this stage is the model that was pre-trained on IMDb movie review language:
+```python
+learn = learn.load_encoder(‘finetuned’)
+```
+
+#### Finetuning the Classifier
+
+Finetuning the classifier is done with ... learning rates and gradual unfreezing. Unlike in computer vision where all layers are unfrozen simultaneously, unfreezing the layers of a natural language neural network gradually in training makes a difference to its accuracy. 
+
+After fitting the final layer with one cycle, the model already achieves 93% accuracy:
+```python
+learn.fit_one_cycle(1, 2e-2)
+```
+
+Unfreesing the final couple of layer groups and training, another 0.5% accuracy is added:
+```python
+learn.freeze_to(-2)
+learn.fit_one)cycle(1, slice(1e-2/(2.6**4), 5e-3))
+```
+
+Unfreesing the rest of the model and training for two more empchs, gets the accuracy up another 1%:
+```python
+learn.unfreeze()
+learn.fit_one_cycle(2, slice(1e-3/(2.6**4),1e-3)
+```
+
+If the model is trained backwards and the results of the two are averaged to create an ensemble, accuracy can be further improved to get 95.1% accuracy. Data augmentation can also have a profound effect on the accuracy of natural language models.
+
+#### Disinformation and Language Models
+
+The ability to generate context-appropriate sentences can be expanded to examine uniqueness and truthfulness. The development of this technology has influenced policymaking.
+
+There is a risk of deep-learning-generated content saturating social media channels. These models are very effective at creating polarizing discussions.
+
+Unfortunately, algorithms are an unlikely defence, because they could be used in training to produce natural text that is not detectable by that algorithm.
+
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
 Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
