@@ -993,6 +993,369 @@ Calling this method also often results in two- to three-times faster training.
 
 It is often wise to experiment with model improvement on small models before applying techniques to larger ones because of the variance in computation speeds. 
 
+### 2.6 Other Computer Vision Problems (PASCAL Multi-lable BIWI Regression Computer Vision Examples) <a class="anchor" id="#section_2_6"></a>
+
+More complicated computer vision problems involve assigning multiple labels to single data points (images).
+
+Consider the PASCAL image dataset:
+```python
+from fastai.vision.all import *
+path = untar_data(URLs.PASCAL_2007)
+```
+
+The dataset has a CSV which assigns labels and validity to each data point (image). It can be accessed using Pandas:
+```python
+df = pd.read_csv(path/‘train.csv’)
+df.head()
+```
+
+#### Pandas and DataFrames
+
+Pandas is a Python Library containing the class `DataFrames` which can store data in rowans and columns indexed similarly to spreadsheets. The following is a list of a few useful properties of `DataFrames`:
+* `iloc` is used to access rows and columns with the following syntax:
+	* `df.iloc[:, 0]` to display a whole column
+	* `df.iloc[0, :]` or `df.iloc[0]` to display a whole row.
+	* `df[‘fname’]` to grab the `fname` column.
+* A new column can be created with the following syntax:
+```python
+df1 = pd.DataFrame()
+df1[‘a’] = [1, 2, 3, 4]
+df1
+```
+Alternatively, new columns can be added with this syntax:
+```python
+df1[’b’] = [10, 20, 30, 40]
+df1[‘a’] = df1[‘b’]
+```
+
+Although they can be unintuitive, Pandas is a useful library, particularly in machine learning applications. The creator of Pandas wrote the book *Python for Data Analysis*, which is a useful resource for the library.
+
+#### DataBlock and DataLoader
+
+A DataBlock and DataLoader are uniquely created for this application.
+
+A `Dataset`, like the one below, is a collection of tuples of independent and dependant variables:
+```python
+a = list(enumerate(string.ascii_lowercase))
+a[0], len(a)
+```
+This gives
+```
+	((0, ‘a’), 26)
+```
+Which shows how `Dataset`s can be indexed and their lengths can be returned. 
+
+Once a `Dataset` has been constructed, it can be passed to a `DataLoader` in the following way
+```python
+	dl_a = DataLoader(a, batch_size = 8, shuffle = True)
+	b = first(dl_a)
+	b
+```
+This gives
+```
+	(tensor([7, 4, 20, 19, 5, 25, 22, 13]),(‘h’, ‘e’, ‘u’, ‘t’, ‘f’, ‘z’, ‘w’, ‘n’))
+```
+
+To see how the independent and dependant variables correspond to one another, the `zip()` function can be used:
+```python
+	list(zip(b[0], b[1]))
+```
+This gives
+```
+[ (tensor(7), ‘h’),
+  (tensor(4), ‘e’),
+  (tensor(20), ‘u’),
+  …]
+```
+
+Python has convenient syntax to pass each element of a data structure into a function like `zip()` using an asterisk:
+```python
+list(zip(*b))
+```
+This gives the same output as the previous example. 
+
+`Datasets` is an object that has an associated training `Dataset` and validation `Dataset`. The following is an example of one:
+```python
+a = list(string.ascii_lowercase)
+dss = Datasets(a)
+```
+
+Functions to compute the independent and dependent variables can be passed into `Datasets` as well in the following way:
+
+```python
+def f1(o): o+‘a’
+def f2(o): o+‘b’
+dss = Datasets(a, [[f1], [f2]]
+```
+
+In this example, `f1` is used to compute the independent variable, and `f2` to compute the dependant variable, both with the parameter `a`. However, the syntax `[[f1, f2]]` can be used to apply both `f1` and `f2` to computing the independent variable with the parameter `a`.
+
+With a `Datasets`, a `DataLoaders` can be constructed in the following way:
+```python
+dls = DataLoaders.from_dsets(dss, batch_size = 4)
+```
+
+It is often convenient to use `DataBlock` instead of going through the manual process of constructing `Dataset`s, a `Datasets`, and then a `DataLoaders`. To do this, start with an empty `DataBlock`, and then take the `Datasets` from it with the `.datasets()` method :
+```python
+dblock = DataBlock()
+dsets = dblock.datasets(df)
+```
+
+By default, 80% of the dataset has been allocated to training, and the remaining 20% has been set aside for validation. The `Datasets` can be deconstructed:
+```python
+x, y = dsets.train[0]
+x, y
+```
+This gives
+```
+(fname			003213.jpg
+ lables			person cat
+ is_valid		True
+ Name: 1620, dtype: object, fname 003213.jpg
+ lables			person cat
+ is_valid		True
+ Name: 1620, dtype: object)
+```
+
+For the case of the PASCAL dataset, the labels or dependant variables will be derived from the file names which can be accessed in the following way:
+```python
+x[‘fname’]
+```
+
+This can be implemented using a lambda which allows a function to be defined and used in the same line of code:
+```python
+dblock = DataBlock(get_x = lambda r: r[‘fname’], get_y = lambda r: r[‘lables’])
+dsets = dblock.datasets(df)
+dsets.train[0]
+```
+
+Note that issues can arise when saving lines that include `lambda`s. So, a safer alternative is the following:
+
+```python
+def get_x(r): return r[‘fname’]
+def get_y(r): return r[‘lables’]
+dblock = DataBlock(get_x = get_x, get_y = get_y)
+dsets = dblock.datasets(df)
+dsets.train[0]
+```
+
+For the independent variable, `x`, the path is required to be able to open the images, and for the dependant variable, `y`, additional string formatting is required:
+```python
+Path.BASE_PATH = path
+
+def get_x(r): return path/‘train’/r[‘fname’]
+def get_y(r): r[‘lables’].split(‘ ’)
+dsets = DataBlock(get_x = get_x, get_y = get_y)
+dblock = dblock.datasets(df)
+dsets.train[0]
+```
+
+`DataBlock` allows the types of data blocks that are required to be defined. In the case of the PASCAL dataset, a `ImageBlog` is required for the independent variable, and a `MultiCategoryBlock` is required for the dependant variable:
+```python
+dblock = DataBlocks(blocks = (ImageBlock, MultiCategoryBlock), get_x = get_x, get_y = get_y)
+dsets = dblock.datasets(df)
+dsets.train[0]
+```
+The independent and dependant variables are returned as follows:
+```
+PILImage mode=RGB size=500x375, TensorMultiCategory([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0.,]))
+```
+Comparisons between activations and categories are done with the `TensorMultiCategory`, which represents which categories the image belongs to (or, has been assigned to it, in other words). The `.vocab()` method can be used to find out which categories the various elements of the `TensorMultiCategory` vector are associated to:
+```python
+idxs = torch.where(dsets.train[0][1] == 1.)[0]
+dsets.train.vocab[idxs]
+```
+
+By default, `DataBlock` uses a random split; however, the CSV for the PASCAL data set includes a column indicating which data points should be used for validation. A splitter can be defined to separate these data points from the rest of the data set:
+```python
+def splitter(df):
+	train = df.index[~df[is_valid]].tolist()
+	valid = df.index[df[‘is_valid]].tolist()
+	
+dblock = DataBlock(blocks = (ImageBlock, MultiCategoryBlock),  splitter = splitter, get_x = get_x, get_y = get_y)
+
+dsets = dblock.datasets(df)
+dsets.train[0]
+```
+
+The last piece of data management that needs to be added before training are augmentations:
+```python
+dblock = DataBlock(blocks = (ImageBlock, MultiCategryBlock), splitter = splitter, get_x = get_x, get_y = get_y, item_tfsm = RandomResizedCrop(128, min_scale = 0.35))
+
+dls = dblock.dataloaders(df)
+```
+
+#### Binary Cross Entropy Loss Function
+
+Before assigning a loss function, a learner is created:
+```python
+learn = cnn_learner(dls, resnet18)
+```
+
+The shape of the activations in the final layer of the model are studied by deconstruction the mini batches into independant (`x`) and dependant (`y`) variables, and applying the `.size()` method to the activations matrix:
+```python
+x, y = dls.train.one_batch()
+activs = learn.model(x)
+activs.shape
+```
+This gives
+```
+torch.Size([64, 20])
+```
+This shape is correct for a mini-batch of 64 items that all have the possibility of being in 20 categories.
+
+The current activations in the last layer of the `resnet18` model can be studied:
+```python
+	\activs[0]
+```
+
+These activations are random at this point, because `resnet18` is a pre-trained model that will have the activations of its last layer retrained for a new task. They are also not between zeor and one, so the `.sigmoid()`, `.log()`, and `.mean()` methods are applied to compute the binary cross entropy loss:
+```python
+def binary_cross_entropy(inputs, targets):
+	inputs = inputs.sigmoid()
+	return torch.where(targets == 1, 1- inputs, inputs).log().mean()
+```
+Because of broadcasting, the last line of the code above applies the “log mean” to each item in the targets matrix.
+
+*PyTorch* includes library functions which are analogous to the `binary_cross_entropy` function defined above. For the following module and function, the initial Sigmoid is not included:
+* `F.binary_cross_entropy`
+* `nn.BCELoss`
+The initial Sigmoid is included in the following module and function:
+* `F.binary_cross_entropy_with_logits`
+* `nn.BCEWithLogitsLoss`
+
+The equivalents for image classification where categorization can be described with a boolean data type (ie. if a data point is not one category, it is the other), are the following modules and functions:
+Without Softmax,
+* `F.nll_loss`
+* `nn.NLLLoss`
+With Softmax,
+* `F.cross_entropy`
+* `nn.CrossEntropyLoss`
+
+For the PASCAL dataset, loss implementation has the following form, since there a is one-hot encoded target:
+```python
+	loss_func = nn.BCEWithLogitsLoss()
+	loss = loss_func(activs, y)
+	loss
+```
+
+The loss is computed by comparing activations to targets.
+
+With loss defined, a metric should also be defined. Since accuracy defined as one minus the loss only works for datasets with single labels, a new accuracy metric must be defined:
+```python
+def accuracy_multi(inp, targ, thresh = 0.5, sigmoid = True):
+	“Compute accuracy when `inp` and `targ` are the same size.”
+	if sigmoid: inp = inp.sigmoid()
+	return ((inp>thresh) == targ.bool()).float().mean()
+```
+Unlike the “one minus loss” definition which “compute[s] accuracy with `targ` when `pred` is `bs * n_classes`”, the new definition “compute[s] accuracy when `inp` and `targ` are the same size”. In the new definition, different thresholds can be defined as the probability above which a data point is part of a certain category. To use a different threshold, other than the default of 0.5, a partial is used. Partials allow a new function to be created based on a previous function, by fixing one of its parameters. Consider the following example of a partial:
+```python
+def say_hello(name, say_what = “Hello”): return f”{say_what} {name}.”
+say_hello(‘Jeremy’), say_hello(‘Jeremy’, ‘Ahoy!’)
+
+f  = partial(say_hello, say_what = “Bonjour”)
+f (“Jeremy”), f(“Sylvain”)
+```
+
+If no loss function is defined when a learner is created, an appropriate one will automatically be assigned; however, the threshold which is assigned may not be the best choice. To find the best threshold, accuracy can be plotted against the threshold, and a desirable threshold can be selected through visual analysis:
+```python
+preds, targs = learn.get_preds()
+accuracy_multi(preds, targs, thres = 0.9, sigmoid = False)
+
+xs = torch.linspace(0.05, 0.95, 29)
+accs = [accuracy_multi(preds, targs, thresh = i, sigmoid = False) for i in xs]
+plt.plot(xs, accs);
+```
+
+A concern in choosing parameters in this way is that choosing a hyperparameter (the threshold) might cause the model to overfit. This is not a concern in the current case, because of how smooth and predictable the accuracy/threshold curve is.
+
+#### Image Regression
+
+The distinction between categorization and regression is that categorization refers to the selection or assignment of discrete labels, while regression refers to the assignment of a continuous number. 
+
+One example of image regression is finding the midpoint of a person’s face using the *Biwi* Kinetic Head Pose Dataset to find the midpoint of a person’s head. 
+
+The dataset is accessed in the usual way, using `.untar_data()`:
+```python
+path = untar_data(URLs.BIWI_HEAD_POSE)
+Path.BASE_PATH = path
+```
+
+This dataset is organized into 24 directories that correspond to different people. Inside each of the directories are many `_pose` and `_rgb` files that correspond with one another. The dataset is parsed and the contents of the `_pose` file is used to assign a label to its corresponding `_rgb` file. 
+```python
+img_files = get_image_files(path)
+
+def img2pose(x): return Path(f’{str(x)[:-7]}pose.txt’)
+
+img2pose(img_files[0])
+	
+im = PILImage.create(img_files[0])
+im.shape
+
+im.to_thumb(160)
+```
+
+The function provided in the `ReadMe` from the dataset’s website for finding the centre of a person’s head is the following:
+```python
+cal = np.genformtxt(path/’01’/’rgb.cal’, skip_footer = 6)
+def get_ctr(f):
+	ctr = np.genformtxt(img2pose(f), skip_header = 6)
+	c1 = ctr[0] * cal[0][0] / ctr[2] + cal[0][2]
+	c2 = ctr[1] * cal[1][1] / ctr[2] + cal[1][2]
+	return tensor([c1, c2])
+```
+This function returns the coordinates of the centre of a person's head, and is called in the following way:
+```python
+get_ctr(image_files[0])
+```
+
+Now, a `DataBlock` can be defined. The format of the dependant variable is a `PointBlock` which allows coordinates to be stored:
+```python
+biwi = DataBlock(
+	blocks = (ImageBlock, PointBlock),
+	get_items = get_image_files,
+	get_y = get_ctrs,
+	splitter = FuncSplitter(labda o: o.present.name == ‘13’),
+	batch_tfms = [*aug_transforms(size = (240, 320)), 		Normalize.from_stats(*imagenet_stats)]
+)
+```
+
+With the `DataBlock` and `path`, a `DataLoaders` can be defined:
+```python
+dls = biwi.dataloaders(path)
+dls.show_batch(max_n = 9, figsize = (8, 6))
+```
+
+In addition to studying the data, it’s format should be analyzed as well:
+```python
+xb, yb = dls.one_batch()
+xb.shape, yb.shape
+```
+
+Shapes of the independent- and dependent-variable mini-batches should be what was expected. In this case, the independent variable has an added dimension with three layers representing the red, green, and blue channels of the image. 
+
+For regression, it is important to define a range within which predictions can be generated. In this case, coordinates are normalized to be between `-1` and `1`. So, the following learner definition with the addition of `y_range` is appropriate:
+```python
+learn = cnn_learner(dls, resnet18, y_range = (-1, 1))
+```
+
+This normalization is accomplished using a Sigmoid function in the following way:
+```python
+def sigmoid_range(x, lo, hi)L return torch.sigmoid(x) * (hi-lo) + lo
+```
+
+Since no loss function was defined in the declaration of the learner, `MSELoss` (mean-squared error) is chosen by default.
+
+No metrics were defined either, but mean-squared error works well. 
+
+Now a learning rate can be defined and fine-tuning on the `resnet18` model can be done:
+```python
+lr = 1e-2
+learn.fine_tune(3, lr)
+```
+
+The ability of a model pre-trained on image classification, and re-trained on image regression, to generate accurate predictions is surprising. This is attributed to the nature of the data. In both cases, images are used. 
+
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
 Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
