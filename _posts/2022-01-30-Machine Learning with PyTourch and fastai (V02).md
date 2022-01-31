@@ -405,11 +405,336 @@ When the learner is called, a tensor indicating the probabilities of an image be
 * `x, y, x, …` is the tensor of probabilities that the current `object` is in each of the classifications.
 In this example, the model predicted that the image is a grizzly bear instead of a black bear or a teddy bear:
 ```python
-('grizzly', tensor(1), tensor([9.0767e-06, 9.9999e-01, 1.5748e-07]))
+  ('grizzly', tensor(1), tensor([9.0767e-06, 9.9999e-01, 1.5748e-07]))
 ```
 By looking at this data returned by the learner, it is easy to recognize that the probability of the image being a grizzly far exceeds the probabilities of it being one of the other categorizations.
 
 The `.vocab()` method can be called to display the mapping between objects in a class and their values or for indices in an array and their values.
+
+### 2.4 Stochastic Gradient Descent (MNIST Handwriting Recognition Example) <a class="anchor" id="#section_2_4"></a>
+
+#### Stochastic Gradient Descent (SGD)
+
+Stochastic Gradient Descent (SGD) is a foundational numerical optimization algorithm used in machine learning. 
+
+The previous example, where the objective was to distinguish a 3 from a 7, can be approached differently. Instead of programming a step-by-step process to compare undetermined images to two ideals, a function computing the probability that each pixel will be dark or light can be programmed and optimized through stochastic gradient descent. 
+
+For the purposed of this exercise, that function is defined as follows:
+```python
+  def pr-eight(x,w) = (x*w).sum()
+```
+
+Where `x` is a vector of probabilities corresponding to each pixel, and `w` is a vector of weights corresponding to each pixel. 
+
+The gradient descent method applied to this problem is defined by Howard and Grugger, follows:
+1. Initialize weights.
+2. For each image, use the weights to predict whether a number appears to be a three or a seven.
+3. Based on these predictions, calculate how good the model is (ie. its loss).
+4. Calculate the gradient, which measures for each weight how changing the weight would change the loss. 
+5. Step (that is, change) all the weights based on that calculation.
+6. Repeat.
+7. Stop, when a desirable loss is reached. 
+
+There are many methods to approach each step.
+
+#### Data Fitting Example of Stochastic Gradient Descent
+
+Consider the following example which uses gradient descent to fit a curve to a plot of roller coast speeds with respect to time. It is known that the best fit curve will have the form $v\left(t\right) = at^{2} + bt + c$. So, the task is to find the constants $a$, $b$, and $c$ that cause the function to best match the data. 
+
+The function is defined with the following lines of code:
+```python
+  def ft(t, params):
+    a, b, c = params
+    return a*(t**2) + (b*t) + c
+```
+
+A loss function is defined as follows:
+
+```python
+  def mse(preds, targets):
+    return((preds - targets) ** 2).mean()
+```
+
+Next, an initial set of parameters:
+
+```python
+  params = touch_randn(3).requires_grad_()
+  orig_params = params.clone()
+```
+
+Now, with the parameters initialized and a function and a loss function defined, the four recursive steps of forming a prediction, calculating an associate loss, calculating an associated gradient, and stepping can be performed:
+
+```python
+  def apply_step(params, prn = TRUE):
+    preds = f(time, params)
+    loss = mse(preds, speed)
+    loss.backward()
+    params.data -= lr*params.grad.data
+    params.grad = None
+    if prn: print(loss.item())
+    return preds
+
+  for i in range(10): apply_step(params)
+```
+
+Note that the use of the `.data` method instructs the compiler to only perform the computation on the value as opposed to the information about the variable's gradient.
+
+#### MNIST Handwriting Recognition Problem
+
+A classic problem in machine learning is hand-writing recognition. A simplified version is distinguishing between photos of a hand-written “3” and a hand-written “7”. 
+
+Without machine learning, one might try to approach the problem with an algorithm. For example, taking a set of images of threes with the same pixel dimensions, and averaging each pixel's darkness across the data-set to come up with a baseline to compare unlabeled images to and doing the same for a set of images of sevens. By taking the mean absolute difference (L1 Norm) or the root mean squared error (L2 Norm) one could make an assertion about which the unknown image is more similar to.
+
+Oftentimes a baseline algorithm of this form can be constructed and used to compare a machine-learning algorithm to. If it is more effective than the algorithm, progress has been made. 
+
+Stochastic gradient descent can be applied to this problem by applying it to the probabilities of each pixel being dark:
+```python
+  w -= gradient(w) * lr
+```
+
+Where `lr` is the “learning rate”. A good choice of learning rate can impact both whether a problem can be solved and how fast it is solved. 
+
+#### Applying Stochastic Gradient Descent to the MNIST Handwriting Recognition Example
+
+The tensor form of each image is reshaped into a vector (a 1D tensor) using the `.view()` method:
+
+```python
+  train_x = torch.cat([stacked_threes, stacked_sevens]).view(-1, 28*28)
+```
+
+Note that using `-1` as the parameter for rows in the `.view()` method indicates that as many rows as are needed for the data will be assigned. It is known that each image is 28 by 28 pixels, so there will be one row. Effectively, this line of code concatenates all images of threes into one matrix and all images of sevens into one matrix where each `28*28`-long row represents one image. 
+
+Next, labels are assigned:
+```python
+  train_y = tensor([1]* len(thress) + [0]*len(sevens)).unsqueeze(1)
+```
+
+A `1` is used for each of the threes and a `0` is used for each of the sevens. The `.unsqueeze()` method converts `train_y` from a vector (one row and many columns) to a matrix with one column and 12396 rows. 
+
+Calling `train_x.shape, train_y.shape` returns the shape of both matrices:
+```
+  (torch.size([12396, 748]), torch.size([12396, 1]))
+```
+
+Together `train_x` and `train_y` can be combined into a dataset, `dset`, which is a list of corresponding inputs and outputs:
+```python
+  dset = list(zip(train_x, train_y))
+  x, y = dset[0]
+```
+
+In the second line of the code above, the dataset, `dset`, is destructured. 
+
+Now, the parameters are initialized to random values:
+```python
+def init_params(size, std = 1.0): return (torch.randn(size)*std).requires_grad_()
+  weights = init_params(28*28, 1)
+```
+
+The function for the parameters, `y`, is linear and must have the form `y = w*x + b`, where `w` is the “weight” and `b` is a bias so that `y` will not equal zero when the pixels are equal to zero. The bias is implemented as follows:
+```python
+  bias = init_params(1)
+```
+
+A prediction for each image can now be generated. The operations necessary to perform this computation are done quickly by performing matrix multiplication with the `@` operator. This is done on the GPU instead of using for loops to calculate it on the CPU.
+
+```python
+  def linear1(xb): return xb@weights + bias
+  preds = linear1(train_x)
+```
+
+This linear function of the form `batch@wegihts + bias` is one of the fundamental equations for any neural network. The other is the so-called “activation function”. The activation will assign the label three (`True`) to a prediction greater than zero and the label seven (`False`)  to a prediction less than zero:
+```python
+  corrects = (preds>0.0).float() = train_y
+```
+
+By taking the mean of the boolean `is three` values assigned for each image, the percentage of times that the model predicts a three can be seen:
+```python
+  corrects.float().mean().item()
+```
+
+Here, the `.item()` method displays more decimal places. 
+
+The gradient of the predictions with respect to the weights can be taken, by calculating the difference in parameters for a small difference in weights. In other words, the slope, $m$ is defined as
+
+$$m = \dfrac{y_{\text{final}}-y_{\text{final}}}{x_{\text{final}}-x_{\text{final}}}$$
+
+Implemented, for the first weight and prediction that looks like this:
+```python
+  weights[0] *= 1.0001
+  preds = linear1(train_x)
+  ((preds>0.0).float() == train_y).float().mean().item()
+```
+
+No change in prediction is noticeable in any of the decimal places. Due to the threshold assigned above, where predictions greater than zero are threes and predictions less than zero are sevens, the loss function is stepped and has a zero gradient almost everywhere. So, a new loss function must be defined. To use the gradient effectively, a slightly better prediction must have a slightly better loss. 
+
+A loss function can be defined as the difference between the target (`1` or `0`) and the probabilistic prediction of a data point being a `1` or `0`:
+```python
+  def mnist_loss(predictions, targets):
+    return torch.where(targets == 1, 1 - predictions, predictions).mean()
+```
+
+This loss is the smallest for good performance of the system. It is generally better for a gradient descent method because it is not a stepped function with many areas of zero slope.
+
+However, in practice, one issue remains. The predictions are not normalized to be in the range of zero to one. To do this the Sigmoid function, which is defined as follows, is used:
+```python
+  def sigmoid(x): return 1/(1+torch.exp(-x))
+```
+
+Combined, the final loss function has the following form: 
+```python
+  def mnist_loss(predictions, targets):
+    predictions = predictions.sigmoid()
+    return torch.where(targets == 1, 1 - predictions, predictions).mean()
+```
+
+Notice that the sigmoid function is a defined method within the included libraries. 
+
+The accuracy, which is what matters, is effectively the inverse of the loss, where it has a high value for good performance and a low value for poor performance. Accuracy is known as a metric, because it is for human interpretation, whereas the loss is used by the program and must have a “nicely behaved gradient”.
+
+The gradient should be used to update the weights of the prediction function in batches, using the GPU for the sake of speed. This is done using matrix multiplication operations which can be performed on the GPU, instead of iterative operations performed on the CPU. A mini-batch approach referred to processing a few pieces of data at a time on the GPU. The size of this mini-batch is called batch size. There is a happy medium in choosing batch sizes where each batch and the number of batches are balanced to minimize the overall run time. 
+
+The batch size is defined using the DataLoader function:
+```python 
+  coll = range(15)
+  dl = DataLoader(coll, batch_size = 5, shuffle = True)
+  list(dl)
+```
+
+DataLoader returns an iterator which is assigned to `dl` in the previous lines of code. Calling `list` with `dl` passed as a parameter lists all five items. In the above example `coll` is a collection of items from zero to 15, `batch_size = 5` assigns a batch size of five items, and `shuffle = True` tells DataLoader to shuffle the items. Note that random orders are good because it avoids the model learning the dataset as opposed to the data itself. 
+
+When a tuple is processed using DataLoader, it creates tuples of batches. So `[[1, a], [2, b], [3, c]` would be processed to `[[1, 2, 3], [a, b, c]]`.
+
+Finally, the gradient descent method can be applied to the MNIST handwriting recognition problem:
+```python
+  for x, y in dl:
+    pred = model(x)
+    loss = loss_func(pred, y)
+    loss.backward()
+    parameters -= parameters.grad * lr
+```
+
+The parameters are re-initialized:
+```python
+  weights = init_params((28*28, 1))
+  bias = init_params(1)
+```
+
+A DataLoader is created:
+```python
+  dl = DataLoader(dset, batch_size = 256)
+  xb, xy = first(dl)
+```
+
+A validation DataLoader is also created:
+```python
+  valid_dl = DataLoader(valid_dset, batch_size = 256)
+```
+
+One epoch of training via stochastic gradient descent is implemented for this example, in the following way:
+```python
+  def train_epoch(moedl, lr, params):
+    for xb, yb in dl:
+      calc_grad(xb, yb, model)
+      for p in params:
+        p.data -= p.grad*lr
+        p.grad.zero_()
+```
+
+This function iterates through the data set, calculates the gradient, and updates each of the parameters using SGD before zeroing the gradient for the next step. The `.backward()` method calculates the gradient and adds it to the list of existing gradients. `.zero_()` must be called to clear the list of existing gradients before adding the new one. The `.data()` method informs PyTorch not to update the gradient for that operation.
+
+The distinction between “gradient descent” and “stochastic gradient descent” is that stochastic gradient descent is performed on mini-batches as opposed to working through the algorithm without batches of data. In the example above, the `for xb, yb in dl` line iterates through the mini-batches generated by the `DataLoader`. 
+
+Now, the accuracy of the predictions can be computed by comparing the predictions, `xb`, to the labels, `yb`:
+```python
+  def batch_accuracy(xb, yb):
+    preds = xb.sigmoid()
+    correct = (preds > 0.5) == yb
+    return correct.float().mean()
+```
+
+This can be implemented for the whole validation set in the following way:
+```python
+  def validate_epoch(model):
+    accs = [batch_accuracy(moedl(xb), yb) for xb, yb in vaid_dl]
+    return round(torch.stack(accs).mean().item(), 4)
+```
+
+In this function, the `.stack()` method stacks the `accs` list items into a tensor, and the `.item()` method converts the mean of that tensor into a scalar with four decimal places, which is indicated by the number after the comma. 
+
+The convergence of the model can be studied by examining the results of iteratively training and validating the model:
+```python
+  for i in range(20):
+    train_epoch(linear1, lr, params)
+    print(validate_epoch(linear1), end = ‘ ‘)
+```
+
+The accuracy increases with each iteration. This is an example stochastic gradient descent optimizer of a linear function.
+
+#### Creating an Optimizer (Simplification Through Refactoring)
+
+The `linear1` function defined previously in this example can be eliminated and replaced by the PyTorch module `nn.Linear`. This is a module that inherits from the `nn.Module` class, defines a linear function of the form `x*w + b`, and initializes its parameters. It is implemented with the following line of code:
+```python
+  linear_model = nn.Linear(28*28,1)
+```
+
+The structure of the weights variable, `w`, defined by calling this method is a vertical vector tensor (`1` column and `28*28` rows), and the bias variable, `b`, is a one-by-one tensor. This can be seen by calling the `.shape()` method on the parameters created by the method:
+
+Running 
+```python
+  w, b = linear_model.parameters()
+  w.shape, b.shape 
+```
+gives
+```
+  (torch.Size([1, 784]), torch.Size([1]))
+```
+
+This information can be implemented by creating a complete optimizer
+```python
+  Class BasicOptim:
+    def __init__(self, params, lr): self.params, self.lr = list(params), lr
+		
+    def step(self, *args, **kwargs): 
+       for p in self.params: p.data -= p.grad.data * self.lr
+
+    def zero_grad(self, *args, **kwargs): 
+      for p in self.params: p.grad = None
+```
+
+An instance of this class can be created for the model’s specific parameters”
+```python 
+  opt = BasicOptim(linear_model.parameters(), lr)
+```
+
+The training function can now be simplified from previous versions
+```python
+  def train_epoch(model):
+    for xb, yb in dl:
+       calc_grad(xb, yb, model)
+       opt.step()
+       opt.zero_grad() 
+```
+
+Use of the validation function remains the same, and can be implemented to study convergence by defining a model training function: 
+```python
+  def train_model(model, epochs): 
+    for i in range(epochs):
+      train_epoch(model)
+      print(validate_epoch(model), end=’ ‘)
+```
+
+A library function that does exactly what `BasicOptim` does is provided within the *fastai* library. It is called `SGD`. Using this function the equivalent of the code above is the following:
+```python
+  linear_model = nn.Linear(28*28, 1)
+  opt = SGD(linear_model.parameters(), lr)
+  train_model(linear_model, 20)
+```
+
+The `.fit()` method from the *fastai* library can be used instead of `train_model` function to create a learner. 
+
+`DataLoaders` is a class that stores `DataLaoder` objects with train and validation attributes. 
+
+`Lerarner` is a class with data loader, function, optimization method, loss function, and metric attributes. 
 
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
