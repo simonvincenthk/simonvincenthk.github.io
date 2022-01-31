@@ -736,6 +736,263 @@ The `.fit()` method from the *fastai* library can be used instead of `train_mode
 
 `Lerarner` is a class with data loader, function, optimization method, loss function, and metric attributes. 
 
+### 2.5 Expanding SGD to Non-linearity and Building a Neural Network <a class="anchor" id="#section_2_5"></a>
+
+#### Nonlinearity
+
+The stochastic gradient descent method discussed to this point can be expanded to encompass optimization on non-linear functions. 
+
+In a very basic way, a neural network can be defined in the following way:
+```python
+  def simple_net(xb):
+    res = xb@w1 +b1
+    res = res.max(tensor(0.0))
+    res = res@w2 +b2
+    return res
+```
+
+The neural net consists of two linear functions. All negative values in the first linear function are made to be zero. This is done with the `.res.max(tensor(0.0))` line, which is officially referred to as a rectified linear unit (ReLU). (ReLU is also available as `F.relu` in *PyTorch*.) The second linear function is derived from the first one. 
+
+`w1` and `w2` are weight tensors, and `b1` and `b2` are bias tensors. All of them can be initialized randomly:
+```python
+  w1 = init_params((28*28, 1))
+  b1 = init_params(30)
+  w2 = init_params((30,1))
+  b2 = init_params(1)
+```
+
+Adding the ReLU to the first linear function in the series of two, introduced as a neural network above, creates a situation where the *Univerasl Approximation Theorem* applies. By adding the non-linearity between linear layers, any arbitrary function can theoretically be approximated using this structure given that the weight and bias matrices are large enough.
+
+With a model, that can approximate any function, the limitation shift to resources such as computing power. All further modifications to the framework presented above are for performance optimization.
+
+This model can be simplified using *fastai* library functions:
+```python
+simple_net = nn.Sequential(
+	nn.Linear(28*28, 30),
+	nn. ReLU(),
+	nn.Linear(30,1)
+)
+```
+
+As can be seen in both of these examples, the framework of a neural network is function decomposition, where the result of one function is passed to the next, iteratively. In the case of a neural network, function composition is done with linear functions such as `res = xb@w1 +b1` or `nn.Linear(28*28, 30)`, and activation functions or non-linearities such as `res = res.max(tensor(0.0))` or `nn. ReLU()`.
+
+With a ReLU, there is a risk of entire mini-batches becoming zero after the first layer. These are called dead units. There are a few methods to avoid this including choosing sensible initial parameters or a change to a non-zero =-sloped function in the first layer.
+
+The new neural network can be trained using a learner:
+```python
+learn = Learner(dls, simple_net, opt_func = SGD, loss_func = mnist_loss, metrics = batch_accuracy)
+learn.fit(40, 0.1)
+```
+
+Generally, neural networks with more layers tend to be less smooth and should be trained with smaller learning rates. 
+
+The convergence of the learner can be studied with the `.recorder` method, for example by plotting accuracy:
+```python
+plt.plot(L(learn.recorder.values).itemgot(2));
+```
+
+This example is simple and effective, but neural networks within the *fastai* library such as the following one with 18 layers, can achieve 99.71% efficiency within the first epoch of training:
+```python
+dls = ImageDataLoaders.from_folder(pathP
+learn = cnn_learner(dls, resnet18, pretrained = False, loss_func = F.cross_entropy, metrics = accuracy)
+```
+
+#### Image Classification
+
+In this section, the approach to machine learning shifts back from a conceptual understanding of how they work to practical applications of written library functions. 
+
+Provided datasets can be downloaded using `untar_data` function:
+```python
+from fastai2.vision.all import *
+path = untar_data(URLs.PETS)
+```
+
+To display the paths of the data relative to `path` above, where the data is downloaded, use `Path.BASE_PATH = path` before displaying the contents of the directory with `path.ls()`.
+
+In the `PETS` data set, dogs are distinguished from cats via capitalization of the first letter of the file name, and breeds are distinguished by the file names themselves. 
+
+#### Regular Epxpressions
+
+“Regular expressions”, or “regex” can be used to partition strings, such as the names of the files in the `PETS` dataset in useful ways. 
+```python
+re.findall(r’(.+)_\d+.pjg$’, fname.name)
+```
+
+This line of code grabs all contents inside parenthesis without any special treatment for backslashes.
+
+This can be implemented in the construction of a data block that associates independent (data) with dependant (labels) variables and then the creation of a data loader:
+
+```python
+pets = DataBlock(
+	blocks = (ImageBlock, CategoryBlock),
+	splitter = RandomSplitter(seed = 42),
+	get_y = using_attr(RegexLabeller(r’(.+)_\d+.pjg$’, fname.name), ‘name’),
+	item_tfsm = Resize(460),
+	batch_tfsm = aug_transforms(size = 224, min_scale = 0.75))
+dls = pets.dataloaders(path/”images”)
+```
+
+The combination of the `item_tfsm = Resize(460)` and `batch_tfsm = aug_transforms(size = 224, min_scale = 0.75))` lines above creates more variability in the data augmentation for this model. Complex augmentation done by `aug_transforms` is done in batches on teh GPU. THis method of data augmentation avoids losses. 
+
+#### Debugging Computer Vision Models
+
+Debuggin in a computer vision model is done using the `.show_batch()` method:
+```python
+dls.show_batch(nrows = 1, ncols = 1)
+```
+
+The data augmentations for one specific datapoint (image) can be seen by including `unique = True`:
+```python
+dls.show_batch(nrows = 1, ncols = 1, unique = True)
+```
+
+The `.summary()` is also effective for debugging, particularly when called on a class like `DataBlock`, because it outputs what the script is doing step-by-step and shows where things might be going wrong. Here is an example of its use in practice:
+```python
+pets1 = DataBlock(
+	blocks = (ImageBlock, CategoryBlock),
+	get_items = get_image_files,
+	splitter = RandomSplitter(seed = 42),
+	get_y = using_attr(RegexLabeller(r’(.+)_\d+.pjg$’, 	fname.name), ‘name’),
+	pets1.summary(path/”images”)
+```
+
+Note that data cleaning does not necessarily need to be done before the model is made. The partially trained model can be used to help clean the model. 
+
+#### Cross-Entropy Loss
+
+*fastai* has the capability of trying to pick a suitable loss function if one is not given. One that is frequently used is “cross-entropy loss”. The previous method of normalizing a probability of two events between `0` and `1` only works for models with binary outcomes. When more categories are included, other loss functions must be used. 
+
+Consider a data batch from the the `.one_batch()` method:
+```python
+x, y = dls.one_batch()
+```
+
+Next, consider the predictions for the mini-batch of 64 items generated above:
+```python
+preds,_ = learn.get_preds(dl = [(x, y)])
+```
+
+The mini bath is passed into `.get_preds` as a data loader to generate a list of predictions. All 37 predictions sum up to $1.0000$ which is expected. 
+
+Softmax can be used to ensure that the predictions for non-binary outcomes sum to one. Effectively, Softmax is an extension of the Sigmoid function that has this capability.
+
+In the current example, we want activations for 37 categories instead of two. For two categories, this is actualized by taking the sigmoid of the relative probabilities of a data point being a specific label. For more than two categories, it is actualized with the Softmax function, which is defined as follows:
+```python
+def softmax(x): return exp(x) / exp(x).sum(dim = 1, keepim = true)
+```
+
+In practice, the *PyTorch* `.softmax()` method can be used directly”
+
+```python
+sm_acts = torch.softmax(acts, dim = 1)
+```
+
+Softmax is not always the best approach, but it is the default because it works well in many situations.
+
+For the pet classification example, the softmax approach is implemented by returning specific columns for each row of some data, in the following way:
+```python
+targ = tensor([0, 1, 0, 1, 1, 0])
+idx = range(6)
+sm_acts[idx, targ]
+```
+
+This method is actually identical to the `torch.where(targes == 1, 1 - inputs, inputs).mean()` line used in the binary predictions example.
+```python
+-sm_acts[idx, targ] 
+```
+
+This is applied to the activations matrix, `sm_acts`, for indices, `idx` from zero to one for the targets `targs`.
+
+In practice, the *PyTorch* `.nll_loss()` method:
+```python
+F.nll_loss(sm_acts, targ, reduction = ‘none’)
+```
+
+“nll” stands for “negative log-likelihood”. 
+
+A logarithm can be applied to transform probabilities between `0` and `1` to values between negative infinity and infinity.
+
+Logarithm identities such as $\log\left(a\times b\right) = \log\left(a\right) + \log\left(b\right)$ are particularly useful in machine learning. The right-hand side of this identity is used because it avoids the occurrence of numbers that are too small or too large for the computer to store accurately.
+
+The negative log-likelihood is defined as the mean of logarithms.
+
+Cross entropy loss is defined as the mean log-likelihood of the softmax or the following:
+```python
+acts.log_softmax().nll_loss
+```
+
+Note that the `.nnl_loss()` method does not take the logarithm of the terms that are passed to it. This is because it is computationally more convenient to take the logarithm at the softmax step.
+
+In practice, the *PyTorch* library method `.` can be used:
+```python
+nn.CrossEntropyLoss(reduction = ‘none’)(acts, targ)
+```
+
+Alternatively, `F.cross_entropy()` can be called as a function. It returns a mean, which can be used for a loss function.
+
+#### Training Convolutional Neural Networks for Computer Vision
+
+Cross-entropy loss is an important concept in building neural networks. 
+
+#### Model Interpretation
+
+Confusion matrices are a useful tool for interpreting a model’s effectiveness. However, the `.most_confused()` method can be used to identify which combinations of data and labels the model got most confused on:
+```python
+interp.most_cpmfused(min_val = 5)
+```
+
+#### Model Improvement
+
+There are several methods for model improvement. One is improving the learning rate. This method can be implemented by calling the `.fine_tune()` method with a higher learning rate:
+
+```python
+learn = cnn_learner(dls, resnet34, metrics = error_rate)
+learn.fine_tune(1, base_lr = 0.1)
+```
+
+In some cases, an inappropriate learning rate will increase the error rate of the model. One method of finding an effective learning rate is to use Leslie Smith’s *Learning Rate Finder* which progressively increases the learning rate for each batch of data processed. A plot of loss against learning rate allows a learning rate for which loss is minimum (divided by 10) or decreasing fastest to be chosen:
+
+```python
+learn = cnn_learner(dls, renset34, metrics = error_rate)
+lr_min, lr_steep = learn.lr_find
+
+print(f”Minimum/10: {lr_min:.2e}, steepest point: {lr_steep:.2e}”
+```
+
+Note that different learning rates are most effective at different stages in the training process. 
+
+The `.fine_tune()` method was designed for transfer learning, where a model is adapted to generate accurate predictions for a specific sub-application. The process of transfer learning retrains (from a re-randomized initialization) the parameters within the final layer of the model’s neural network. 
+
+Within the `.fine_tune()` method, `.freeze()` is called so that all weights except those in the final layer will be kept constant, while the weights in the final layer will continue to have SGD applied to them. So, only the randomly re-initialized weights in the final layer are re-trained on the new data. Then, all parameters are unfrozen and a learning rate half as large is used to train all the weights.
+
+`.lr_find()` and `.fine_tune()` can be applied iteratively to find progressively better learning rates as the model approaches greater accuracies. Through this process, the earlier layers of the neural networks often get trained more and better than later layers. So, it would be ideal to apply a smaller learning rate to the earlier layers which are closer to having ideal weights and larger learning rates to later layers which are further from having their ideal weights. This is possible in *fastai* by passing a `slice` to the learning rate parameter of `.fit_one_cycle()`:
+ 
+```python
+learn = cnn_learner(dls, resnet34, metrics = error_rate)
+learn.fit_one_cycle(3, 3e-3)
+learn.unfreeze()
+learn.fit_one_cycle(12, lr_max = slice(1e-6, 1e-4))
+```
+
+The notation `slice(1e-6, 1e-4)` indicates that the learning rate of the first layer will be $10^{-6}$ and the learning rate of the last layer will be $10^{-4}$. Layers in between will have arithmetically distributed weights. 
+
+`.fit_one_cycle()` starts at a low learning rate (first argument) and progressively increases its maximum learning rate (second argument).
+
+Note that loss and error rates will not always change simultaneously. In some cases, one will change before the other. It’s important to understand that the error rate is more important than the loss. 
+
+If this approach (choosing good learning rates) to model improvement does not yield accurate enough results, an effective second approach is making the architecture deeper by adding more layers to the neural network. The ResNet architecture, pre-trained on Imagenet is available in 18-, 34-, 50-, 101-, and 152-layer variants.
+
+If a model uses too much memory, the `to_fp16()` method can be called to use half as many bits in the GPU computation it runs:
+```python
+from fastai.callback.fp16 import *
+learn = cnn_learner(dls, resnet50, metrics = error_rate).to_fp16()
+learn.fine_tune(6, freeze_epochs = 3)
+```
+
+Calling this method also often results in two- to three-times faster training.
+
+It is often wise to experiment with model improvement on small models before applying techniques to larger ones because of the variance in computation speeds. 
+
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
 Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
