@@ -31,7 +31,7 @@ Version/Revision | Date Published | Details
 -----|-----|----- 
 V00, Rev.01 | 2021-11-25 | Initial Draft
 V01, Rev.00 | 2021-12-26 | Midterm Submission
-V01, Rev.01 | 2022-01-30 | *fastai* Course Notes Added (Excluding Data Ethics) §[2.1](#section_2_1)–[.10](#section_2_10)
+V01, Rev.01 | 2022-01-31 | Rough *fastai* Course Notes (Excluding Data Ethics) Added: §[2.1](#section_2_1)–[.10](#section_2_10)
 
 
 ## 1. Theory of Machine Learning <a class="anchor" id="section_1"></a>
@@ -2592,6 +2592,418 @@ The ability to generate context-appropriate sentences can be expanded to examine
 There is a risk of deep-learning-generated content saturating social media channels. These models are very effective at creating polarizing discussions.
 
 Unfortunately, algorithms are an unlikely defence, because they could be used in training to produce natural text that is not detectable by that algorithm.
+
+### 2.10 Reccurent Nueral Networks (*Human Numbers RNN Example*) <a class="anchor" id="#section_2_10"></a>   
+
+Natural language models frequently use recurrent neural networks (RNNs).
+
+#### Data
+
+Howard and Gugger created a natural language dataset for fast prototyping called *human numbers*, which is ten-thousand numbers written out in English. It can be downloaded from the `fastai2` library:
+```python
+from fastai2.text.all import *
+path = untar_data(URLs.HUMAN_NUMBERS
+
+path.BASE_PATH = path
+
+path.ls()
+```
+Calling `.ls()` reveals that there is a training and validation .txt file.
+
+Both can be opened in turn and concatonated into a single file called `lines`:
+```python
+lines = L()
+with open(path/’train.txt’) as f: lines += L(*f.readlines())
+with open(path/’valid.txt’) as f: lines += L(*f.readlines())
+lines
+```
+
+These lines are concatonated into a long string of words separated by `’ . ‘`:
+```python
+text = ‘ . ‘.join[l.strip() for l in lines])
+text[:100]
+```
+
+Next, the dataset is tokenized:
+```python
+tokens = L(text.split(‘ ‘))
+tokens[100:110]
+```
+
+To numericalize, a new vocab(ulary) must be assigned:
+```python
+vocab = L(tokens).unique()
+vocab
+```
+
+Now, the the string of tokens can be transformed into a string of the tokens’ corresponding Ids (numbers):
+```python
+word2idx = {w:i for i, w in enumerate(vocab)}
+nums = L(word2idx[i] for i in tokens)
+tokens, nums
+```
+
+#### Language Model from Scratch
+
+With the data in the desired format, a model can be constructed.
+
+To begin with, the string of tokens is parsed and broken up into shorter strings of three tokens (independent variable)  followed by a fourth (dependant variable) each:
+```python
+L((tokens[i:i+3], tokens[i+3]) for i in ranged(0, len(tokens)-4, 3))
+```
+
+The same thing can be done with the numericalized data for shorter tensors:
+```python
+seqs = L((tensor(nums[i:i+3), nums[i+3]) for i in range(0, len(nums)-4, 3))
+seqs
+```
+
+Batching this data with `DataLoaders` is relatively easy:
+```python
+bs = 64
+cut = int(len(seqs) * 0.8)
+dls = DataLoaders.from_dsets(seqs[:cut], seqs[cut:], bs = 64, shuffle = False)
+```
+
+A language model that predicts a fourth word based the preceding three cna be created with *PyTorch* library functions:
+```python
+class LMMmodel1(Module):
+	def __init__(self, vocab_sz, n_hidden):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.h_h = nn.Linear(n_hidden, n_hidden)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+
+	def forward(self, x):
+		h = F.relu(self.h_h(self.i_h(x[:,0])))
+		h = h + self.i_h(x[:,1])
+		h = F.relu(self.h_h(h))
+		h = h + self.i_h(x[:, 2])
+		h = F.relu(self.h_h(h))
+		return self.h_o(h)
+```
+This is a three-layer neural network. Three linear layers are separated by three non-linear, rectified-linear-unit layers. Notice that a single linear layer, `self.h_h`, is re-used. Howard and Gugger make the following distinctions between the re-used layers:
+* “The embedding layer (`i_h` for *input* to *hidden*)
+* The linear layer to create activations for the next word(`h_h` for *hidden* to *hidden*)
+* A final linear layer to predict the fourth word (`h_o` for *hidden* to *output*)”
+
+Inputs have the size `batch_size` $\times$ `#inputs`. Hidden layers have the size `batch_size` $\times$ `#activations`. Outputs have the size ` batch_size` $\times$ `#classes`. Between the input and hidden layers, a *ReLU* matrix multiplication is performed. And between the hidden and output layers, a *Solftmax* matrix multiplication is performed. 
+
+The first layer of the model creates activations, based on the first word, which are then compared to the second word in the second layer where a new set of activations is created. In the third layer, the activations of the second layer are compared to the third word, and activations for the fourth word are created. And finally, in the output layer, the activations from the third layer are compared to the fourth word. Each comparison that is made can either be an addition or concatenation.
+
+The addition of inputs at subsequent layers of the neural network has not been seen before in this course. Operations of the same type, have the same weight matrix. These operations are “`input` to `hidden`”, “`hidden` to `output`”, and “`hidden` to `hidden`”. `input` to `hidden` is always the same embedding. Each time an embedding occurs, it is added to the current activations.  `hidden` to `hidden` is always processing through a linear layer. `hidden` to `output` occurs at the end when predictions are made.
+
+Having created a class for the model, it can be substantiated:
+```python
+learn = Learner(dls, LMModel1(len(vocab), 64), loss_funct = F.cross_entropy, metrics = accuracy)
+learn.fit_one_cycle(4, 1e-3)
+```
+This yields 45 – 50% accuracy which is significantly higher than the simplest possible baseline.
+
+The initial definition of the model is refactored using a for loop:
+```python
+class LMMmodel2(Module):
+	def __init__(self, vocab_sz, n_hidden):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.h_h = nn.Linear(n_hidden, n_hidden)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+
+	def forward(self, x):
+		h = 0
+		for i in range(3):
+			h = h + self.i_h(x[:, i])
+			h = F.relu(self.h_h(h))
+		return self.h_o(h)
+```
+
+The model is trained again:
+```python
+learn = Learner(dls, LMModel1(len(vocab), 64), loss_funct = F.cross_entropy, metrics = accuracy)
+learn.fit_one_cycle(4, 1e-3)
+```
+A similar accuracy level is observed.
+
+The neural network with the for loop is a recurrent neural network. Note that “hidden state” refers to the activations that are occurring within the recurrent neural net. 
+
+#### Improving the Recurrent Neural Network
+
+It doesn’t make sense to reset `h` to `0.` every time a new batch is started, because when this is done, what was learnt during training of the previous batch is forgotten.
+
+Maintaining the state of `h` across batches can be implemented as follows, by adding a `self.h` attribute to each instance of the class:
+```python
+class LMMmodel3(Module):
+	def __init__(self, vocab_sz, n_hidden):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.h_h = nn.Linear(n_hidden, n_hidden)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+		self.h = 0.
+
+	def forward(self, x):
+		for i in range(3):
+			self.h =self.h + self.i_h(x[:, i])
+			self.h = F.relu(self.h_h(self.h))
+			out = self.h_o(self.h)
+			self.h = self.h.detach()
+		return out
+
+	def reset(self): self.h = 0
+```
+
+Note that the neural network is now effectively three-times-the-number-of-min-batches layers deep. This would require back-propagation of all these layers for calculations of the gradients. To avoid this, the `.detach()` method is used to remove the gradient history after each mini-batch is processed through the recursive neural network.
+
+The samples must be seen in the correct order. Indexing to ensure that this happens is done like this:
+```python
+def group_chucks(ds, bs):
+	m = len(ds) // bs
+	new_ds = L()
+	for i in range(m): new_ds += L(ds[i + m*j] for j in range(bs))
+	return new_ds
+```
+
+This function can be called to create a training and validation dataset within `DataLoaders`:
+```python
+cut = int(len(seqs) * 0.8)
+dls = DataLoaders.from_dsets(
+	group_chunks(seqs[:cut], bs),
+	group_chunks9seqs[cut:], bs),
+	bs = bs, drop_last = True, shuffle = False)
+```
+
+At the start of each epoch, `.reset()` from `LMModel3` must be called. *fastai*’s `Callback`s are a class which calls some particular code during the training loop. This is used for resetting the activations after each epoch of training:
+```python
+learn = Learner(dls, LMModel3(len(vocab), 64), loss_func = F.cross_entropy, metrics = accuracy, cbs = ModelReseter)
+learn.fit_one_cycle(10, 3e-3)
+```
+
+The results of this “state-full” RNN are noticeable. Accuracy increases to 59%.
+
+The original way the data was formatted is not the most effective. Only every fourth word is learned based on the preceding three in that version. A better approach would be to create a cascading string of three words as the independent variable, and a string of one word as the dependant variable. This way each word can be included as an independent and dependat variable in training and validation:
+```python
+sl = 16
+seqs = L((tensor(nums[i, i+sl]), tensor(nums[i+1:i+sl+1])) for i in range(0, len(nums)-sl-1, sl))
+cut = init(len(seqs) * 0.8)
+dls = DataLoaders.from_dsets(group_chunks(seqs[:cut], bs), group_chunks(seqs[cut], bs), bs = bs, drop_last = True, shuffle = False)
+```
+
+The model must also be adapted slightly to accommodate this new data format:
+```python
+	class LMMmodel4(Module):
+		def __init__(self, vocab_sz, n_hidden):
+			self.i_h = nn.Embedding(vocab_sz, n_hidden)
+			self.h_h = nn.Linear(n_hidden, n_hidden)
+			self.h_o = nn.Linear(n_hidden, vocab_sz)
+			self.h = 0.
+
+		def forward(self, x):
+			outs = []
+			for i in range(sl):
+				self.h =self.h + self.i_h(x[:, i])
+				self.h = F.relu(self.h_h(self.h))
+				out = self.h_o(self.h)
+				self.h = self.h.detach()
+			return torch.stack(outs, dim = 1)
+
+		def reset(self): self.h = 0
+```
+
+A cross-entropy loss function that accommodates the output shape of `bs` $\times$ `sl` $\times$ `vocab_sz` must be defined:
+```python
+def loss_func(inp, targ):
+	return F.cross_entropy(inp.view(-1, len(vocab)), targ.view(-1))
+```
+
+With an appropriate loss function defined, the model can finally be trained:
+```python
+learn = Learner(dls, LMModel4(len(vocab), 64), loss_func = loss_func, metrics = accuracy, cbs = ModelReseter)
+learn.fit_one_cycle(15, 3e-3)
+```
+Accuracy improves to 64%.
+
+#### Multilayer RNNs
+
+Although the recursive neural network is quite deep, it is limited by using the same weight matrix at each layer. This limitation is resolved using a “multilayer RNN” where each set of recursive neural-network layers for each mini-batch has a new weight matrix.
+
+Instead of writing this model out from scratch, *PyTorch*’s RNN class is used:
+```python
+class LMMmodel5(Module):
+	def __init__(self, vocab_sz, n_hidden, n_layers):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.rnn = nn.RNN(n_hidden, n_hidden, n_layers, batch_first = True)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+		self.h = torch.zeros(n_layers, bs, n_hidden)
+
+	def forward(self, x):
+		res, h = self.rnn(self.i_h(x), self.h)
+		self.h = h.detach()
+		return self.h_o(res)
+
+	def reset(self): self.h.zeros_()
+```
+```python
+learn = Learner(dls, LMModel5(len(vocab), 64), loss_func = CrossEntropyFLat(), metrics = accuracy, cbs = ModelReseter)
+learn.fit_one_cycle(15, 3e-3)
+```
+
+The accuracy achieved with `LMMmodel5` is 48%. This is a worse accuracy than previously.
+
+#### Exploding or Disappearing Activations
+
+The reduced accuracy can be attributed to exploding or disappearing activations because of how deep the model is. This is a result of the very large or very small values resulting from multiplication and addition operations that cannot be stored accurately in floating-point variables. Large numbers are stored much less precisely than small numbers in this data type. Particularly for gradients where changes between two similar numbers are regularly calculated, this could problematically results in zero. The relative accuracy gets progressively worse.
+
+There are several way to avoid the negative effects of floating point rounding error in many-layer neural networks like this. For recursive neural networks a common method is to use LSTM (long short-term memory). They can be built from scratch and look like this:
+```python
+class LSTMCell(Modue):
+	def __init__(self, ni, nh):
+		self.forget_gate = nn.Linear(ni + nh, nh)
+		self.input_gate = nn.Linear(ni + nh, nh)
+		self.cell_gate = nn.Linear(ni + nh, nh)
+		self.output_gate = nn.Linear(ni + nh, nh)
+
+	def forward(self, input, state):
+		h,c = state
+		h = torch.stack([h, input], dim =1)
+		forget = torch.sigmoid(self.forget_gate(h))
+		c = c * forget
+		inp = torch.sigmoid(self.input_gate(h))
+		cell = torch.tanh(self.cell_gate(h))
+		c = c * inp * cell
+		out = torch.sigmoid(self.output_gate(h))
+		h = outgate * torch.tanh(c)
+		return h, (h, c)
+		
+```
+
+This class takes the place of matrix multiplication. There are small neural networks within the class that decide how much of the old states are kept versus thrown away, and likewise for the new states.
+
+A shorter, refactored version of this class is the following:
+```python
+class LSTMCell(Modue):
+	def __init__(self, ni, nh):
+		self.ih = nn.Linear(ni , 4*nh)
+		self.hh = nn.Linear(ni , 4*nh)
+
+	def forward(self, input, state):
+		h, c = state
+		
+		gates = (self.ih(input) + self.hh(h)).chunk(4, 1)
+		ingate, forgetgate, outgate = map(torch.sigmoid, gates[:3])
+		cellgate = gates[3].tanh()
+
+		c = (forgetgate*c) + (ingate*cellgate)
+		h = outgate * c.tanh()
+		return h, (h, c)		
+```
+
+A recursive neural network that uses an `LSTMCell` instead of matrix multiplication (`@`) is called an LSTM.
+
+Implementing it in a recursive neural network, `.RNN()` is replaced with `.LSTM()`:
+```python
+class LMMmodel6(Module):
+	def __init__(self, vocab_sz, n_hidden, n_layers):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.rnn = nn.LSTM(n_hidden, n_hidden, n_layers, batch_first = True)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+		self.h = [torch.zeros(n_layers, bs, n_hidden)]
+
+	def forward(self, x):
+		res, h = self.rnn(self.i_h(x), self.h)
+		self.h = [h.detach() for h_ in h]
+		return self.h_o(res)
+
+	def reset(self): self.h.zeros_()
+```
+
+Because beach matrix multiplication has more layers in it, the hidden state must be adapted to include more layers as well. 
+
+The model is trained:
+```python
+learn = Learner(dls, LMModel6(len(vocab), 64, 2), loss_func = CrossEntropyFLat(), metrics = accuracy, cbs = ModelReseter)
+learn.fit_one_cycle(15, 1e-2)
+```
+
+Accuracy is increased to 76%.
+
+The `ActivationStats` class can be used to identify whether activations are exploding or disappearing.
+
+#### Reularizing an LSTM
+
+Regularization can be used preventatively to avoid overfitting in LSTMs. Geoffrey Hilton et al. established in their paper *Improving neural networks by preventing co-adaptation of feature detectors*, that dropouts are a particularly good way of doing this. 
+
+Dropout deletes activations at random for each mini-batch. Doing this, helps to generalize, by ensuring that activations do not become overly specialized at any particular task. 
+
+This is how a `Dropout` works:
+```python
+class Droput(Module):
+	def __init__(self, p): self.p = p
+
+	def forward(self, x):
+		if not self.training: return x
+		mask = x.new(#x.shape).bernoulli_(1-p)
+		return x * mask.div_(1-p)
+```
+
+This class can be checked by running it on a tensor and comparing the results to what was expected. 
+
+There is a library function included for this, which can be used as well: `nn.Dropout`.
+
+`self.training` is set for every module in *fastai* by default based on whether the training loop is processing training or validation data. This is also included in *PyTorch* but requires more nuanced control if the *fastai* libraries are not used. 
+
+#### Activation Regularization (AR) and Temporal Activation Regularization (TAR)
+
+Activation regularization is similar to weight decay. Rather than adding some multiplier times the sum of the weights squared, the same process is applied to activations:
+```python
+loss += alpha * activations.pow(2).mean()
+```
+
+Instead of just trying to decrease the weights, the total activations can now be decreased.
+
+With this, temporal activation regularization can be expressed as the difference between the previous-time-step activations and the current-tim-step activations, squared and summed:
+```python
+loss += beta * (activations[:,1:] - activations[:, :-1]).pow(2).mean()
+```
+
+This allows the change in activations from one time step to the next to be limited.
+
+#### Training Weight-tied Reularized LSTMs
+
+Sevaral final adjustments are included in the last version of the recursive neural network model:
+```python
+class LMMmodel7Module):
+	def __init__(self, vocab_sz, n_hidden, n_layers):
+		self.i_h = nn.Embedding(vocab_sz, n_hidden)
+		self.rnn = nn.LSTM(n_hidden, n_hidden, n_layers, batch_first = True)
+		self.drop = nn.Dropout(p)
+		self.h_o = nn.Linear(n_hidden, vocab_sz)
+		self.h_o.weight = self.i_h.weight
+		self.h = [torch.zeros(n_layers, bs, n_hidden) for_ in range(2)]
+
+	def forward(self, x):
+		raw, h = self.rnn(self.i_h(x), self.h)
+		out = self.drop(raw)
+		self.h = [h.detach() for h_ in h]
+		return self.h_o(out), raw, out
+
+	def reset(self): 
+		for h in self.h: h.zeros_()
+```
+
+The weights of the hidden to output layer are set to always be equal to the weights of the input to the hidden layer. This is called weight tying. It is done because those two layers perform the same computation only inverted: numericalization, and de-numericalization. Results are improved by doing this. 
+
+This final model is assigned a learner using a call-back of the `RNNRegularizer`:
+```python
+learn = Learner(dls, LMModel6(len(vocab), 64, 2, 0.5), loss_func = CrossEntropyFLat(), metrics = accuracy, cbs = [ModelReseter, RNNRegularizer(alpha = 2, beta = 1)])
+```
+
+Calling `TextLearner` will add the `ModelReseter` and ` RNNRegularizer` automatically:
+```python
+learn = TextLearner(dls, LMModel6(len(vocab), 64, 2, 0.4), loss_func = CrossEntropyFLat(), metrics = accuracy)
+```
+
+Training the model with a weight decay, `wd`, of `0.1` reveals an accuracy of 87%:
+```python
+learn.fit_one_cycle(15, 1e-2, wd = 0.1)
+```
+
+This final version is a state-of-the-art neural network.
 
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
