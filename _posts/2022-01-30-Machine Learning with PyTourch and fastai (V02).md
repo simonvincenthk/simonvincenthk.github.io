@@ -1356,6 +1356,959 @@ learn.fine_tune(3, lr)
 
 The ability of a model pre-trained on image classification, and re-trained on image regression, to generate accurate predictions is surprising. This is attributed to the nature of the data. In both cases, images are used. 
 
+### 2.7 Tabular Machine Learning with Collaborative Filtering (MovieLens Collaborative Filtering Example) <a class="anchor" id="#section_2_7"></a>
+
+Collaborative filtering allows recommendations to be made based on similarities between two users. For example, movie recommendations are made based on overlapping interests between users. Recommendations of this type are called “latent factors.” Collaborative filtering has applications whenever historical behaviour should be projected forward to predict future behavior.
+
+Consider the dataset, MovieLens, which contains movie rankings on the order of magnitude of $10^{7}$ (tens-of-millions). The data is collated with user, movie, rating, and timestamp columns. 
+```python
+from fastai2.collab import*
+from fastai2.tabular.all import *
+	
+path = untar_data(URLs.ML_100k)
+
+ratings = pd.read_csv(path/’u.data’, delimiter = ‘\t’, header = None, names = [‘user’, ‘movie’, ‘rating’, ‘timestamp’])
+ratings.head()
+```
+
+Another method of looking at the dataset is to tabulate scores in a table of users as rows, and movies they’ve seen as columns:
+
+The objective of collaborative filtering in this MovieLens example is to create unique recommendations for viewers about movies they have not yet watched. This can be done with correlations between movies, such as what genre they fall into and share with other movies. Alternatively, this can be done with correlations that exist based on what movies each user watched. Based on the assumption that if two users like the same movies, they might like movies that the other user has seen, this can be effective.
+
+Consider an array of rankings for a movie called “last skywalker” which represent science fiction, action, and old movies:
+```python
+last_skywalker = np.array([0.98, 0.9,-0.9])
+```
+
+Next, consider an array which represents a user’s preferences for the same genres:
+```python
+user1 = np. array([0.9, 0.8, -0.6])
+```
+
+A number that quantifies the match between a users preference and a move can then be calculated as the dot product of the two arrays:
+```python
+(user1 * last_skywalker).sum()
+```
+The values in these two arrays used to rank known or unknown categories are the “latent values”
+
+Unfortunately, the latent factors are unknown. But, they can be learned through machine learning.
+
+#### Learning Latent Factors
+
+Values are calculated as the dot product of latent factors for a movie and a user. These are then compared to real data about ratings users gave movies and optimized by changing their latent values.
+
+Before proceeding a table of movie names is joined to the ratings table using the `.merge()` method from Pandas:
+```python
+movies = pd.read_csv(path/’u.item’, delimiter = ‘|’, encoding = ‘latin-1’, usecols = (0, 1), names = (‘movie’, ‘title’), header = None)
+ratings = ratings.merge(movies)
+ratings.head()
+```
+
+A `DataLoaders` for this collaborative filtering application is created:
+```python
+dls = CollabDataLoaders.from_df(ratings, item_name = ‘title’, bs = 64)
+dls.show_batch()
+```
+By default, the `ratings` are titled “ratings”, but the `item_name`s are not, so “title” is selected, and the batch size `bs` is set to 64.
+
+Note that in the MovieLens dataset, each movie and its data is stored as an instance of a class. The same applies for users. 
+
+A matrix for collaborative filtering must be initialized with random entries:
+```python
+n_users = len(dls.classes[‘user’])
+n_movies = len(dls.classes[‘title’])
+n_factors = 5
+
+user_factors = torch.randn(n_users, n_factors)
+movie_factors = torch.randn(n_movies, n_factors)
+```
+
+The match result for a given user and movie is calculated as the dot product of the row/column of latent values that corresponds with the user (from `user_factors`) and the movie (from `movie_factors`).
+
+This is done by matrix multiplying a `one_hot` encoded vector corresponding to the desired index by the `user_factors` and `movie_vectors`:
+```python	
+one_hot_3 = one_hot(3, n_users).float()
+user_factors.t() @ one_hot_3
+```
+Unfortunately, this is a relatively inefficient way to do matrix look-up. The process of “matrix embedding” makes this process less computationally demanding. Matrix embedding has the same computational speed as array lookup and the same gradients as matrix multiplication.
+
+Instead of using a one-hot encoded matrix, an array lookup is used:
+```python
+user_factors[3]
+```
+
+With this information, a complete collaborative filtering model can be constructed.
+Data structures such as classes are used to do this:
+```python
+class Example:
+	def __inti__(self, a): self.a = a
+	def say(self, x): return f’Hello {self.a}, {x}.’	
+```
+Notice that for the definition of each method within the class, `self` is declared as a parameter.
+
+An “instance” of this class can now be created:
+```python
+ex = Example(‘Sylvain’)
+ex.say(‘nice to meet you’)
+```
+This gives
+```
+‘Hello Sylvain, nice to meet you.’
+```
+
+Definition of classes also allows inheritance when a parameter is included in the class definition. For this example of collaborative filtering, all of the functionality of `Module` is included in `DotProduct` by passing it in during the definition of the class. Additionally, the `Embedding` function, previously discussed, is implemented in the definition of the `DotProduct` class:
+```python
+class DotProduct(Module):
+	def __init__(self, n_users, n_movies, n_factors):
+		self.user_factors = Embedding(n_users, n_factors)
+		self.movie_factors = Embedding(n_movies, n_factors)
+
+	def forward(self, x):
+		users = self.user_factors(x[:, 0])
+		movies = self.movie_factors(x[:, 1])
+		return (users * movies).sum(dim = 1)		
+```
+
+Any time a method inherited from `Module` is called, `.forward()` from `DotProduct` will be called as well. `x` being passed into `.forward()` is a matrix with two columns, the $0^{\text{th}}$ one of which contains the indices for user factors, and the $1^{\text{th}}$ or which contains the indices for the movie factors. The dot product is summed over the compatibility dimension(1), not the mini-batch dimension (0).
+
+Assessing the size of the independent variable of the `DataLoaders reveals a matrix of 64 items each of which has a movie and a user item:
+```python
+x, y = dls.one_batch()
+x.shape
+``` 
+This gives
+```
+torch.Size([64, 2])
+```
+
+Now a model and learner can be defined:
+```python
+model = DotProduct(n_users, n_movies, 50)
+learn = Learner(dls, model, loss_func = MSELossFlat())
+```
+
+Lastly, the model can be fit:
+```python
+learn.fit_one_cycle(5, 5e-3)
+```
+
+To improve results, a regression range should be defined using `y_range`:
+```python
+class DotProduct(Module):
+	def __init__(self, n_users, n_movies, n_factors, y_range = (0, 5.5)):
+		self.user_factors = Embedding(n_users, n_factors)
+		self.movie_factors = Embedding(n_movies, n_factors)
+		self.y_range = y_range
+
+	def forward(self, x):
+		users = self.user_factors(x[:, 0])
+		movies = self.movie_factors(x[:, 1])
+		return sigmoid_range((users * movies).sum(dim = 1), *self*y_range)	
+```
+
+Results improve a small amount.
+
+To improve results further, bias (how well or poorly a user usually rates movies) should be accounted for by adding another latent value:
+```python
+class DotProduct(Module):
+	def __init__(self, n_users, n_movies, n_factors, y_range = (0, 5.5)):
+		self.user_factors = Embedding(n_users, n_factors)
+		self.user_bias = Embedding(n_users, 1)
+		self.movie_factors = Embedding(n_movies, n_factors)
+		self.y_range = y_range
+
+	def forward(self, x):
+		users = self.user_factors(x[:, 0])
+		movies = self.movie_factors(x[:, 1])
+		res = (users * movies).sum(dim =1, keepim = True)
+		res += self.user_bias(x[:, 0]) + self.movie_bias(x[:, 1])
+		return sigmoid_range(res, *self*y_range)	
+```
+
+The addition of this latent parameter causes the model to overfit and the loss gets larger.
+
+#### Regularization
+
+Regularization is used as a collaborative filtering analog of data augmentation. It penalizes models with many parameters and training epochs for overfitting. Regularization is also said to “reduce the capacity” of a model. Simply reducing the number of parameters in a collaborative filtering model is not enough. This tends to simplify the shape of the fit model.
+
+The first method of regularization studied is “weight decay” or “L2 linearization”. In weight decay, the size of the parameters is encouraged to be small. This is done by adding the sum of all the weights squared to the loss function. This prevents overfitting because it limits the weights from growing too much and creates an overfit, jagged solution. Weight decay `wd` is a parameter that controls the sum of the squared weights added to the loss:
+```python
+loss_with_wd = loss + wd * (weight**2).sum()
+```
+
+Note that the gradient of this function will be taken for which the weights will have a linear effect:
+```python
+weight.grad += wd * 2 * weight
+```
+
+The results of implementing this in the following way will be an increase in training loss, but a decrease in validation loss, indicating that the model is no longer over-fitting:
+```python
+model = DotProductBias(n_users, n_movies, 50)
+learn = Learner(dlsm model, loss_func = MSELossFlat())
+learn.fit_one_cycle(5, 5e-3, wd = 0.1)
+```
+
+#### Embedding Module
+
+To better understand the “embedding” method of indexing into an array, a class with a .embedding()` method is written:
+```python
+class T(Module):
+	def __init__(self): self.a = torch.ones(3)
+
+L(T().parameters())
+```
+
+To tell the compiler that the inherited tensor is a parameter to be learned, it must be wrapped in the `nn.Parameter` class, which automatically also calls `.requires_grad_()` when it is called:
+```python
+class T(Module):
+	def __init__(self): self.a = nn.Parameter(torch.ones(3))
+
+L(T().parameters())
+```
+Note that *PyTorch* automatically uses `nn.Parameter()` for `nn.Linear()`:
+```python
+class T(Module):
+	def __init__(self): self.a = nn.Linear(1, 3, bias = False)
+
+t = T()
+L(t.parameters())
+```
+
+Generally when a tensor parameter is initialized it should be assigned random values:
+```python
+def create_params(size):
+	return nn.Parameter(torch.zeros(*size).normal_90, 0.01))
+```
+
+This can be implemented in the definition of the `DotProductBias` class without the use of `Embedding`:
+```python
+class DotProduct(Module):
+	def __init__(self, n_users, n_movies, n_factors, y_range = (0, 5.5)):
+		self.user_factors = create_params([n_users, n_factors])
+		self.user_bias = create_params([n_users])
+		self.movie_factors = create_params([n_movies, n_factors])
+		self.movie_bias = create_params([n_users])
+		self.y_range = y_range
+
+	def forward(self, x):
+		users = self.user_factors(x[:, 0])
+		movies = self.movie_factors(x[:, 1])
+		res = (users * movies).sum(dim =1)
+		res += self.user_bias[x[:, 0]] + self.movie_bias[x[:, 1]]
+		return sigmoid_range(res, *self*y_range)	
+```
+
+#### Collaborative Filtering Analysis: Interpreting Embeddings and Biases
+The trained movie biases can be seen and interpreted by displaying the movies with the lowest values in the bias vector:
+```python
+movie_bias = learn.model.movie_bias.squeeze()
+idxs = movie_bias.argsort()[:5]
+[dls.classes[‘title’][i] for i in dixs]
+```
+This gives
+```
+[‘Children of the Corn: The Gathering  (1996)’,
+ ‘Lawnmower Man 2: Beyond Cyberspace (1996)’,
+ ‘Beautician and the Beast, The (1997)’,
+ ‘Crow: City of Angels, The (1996)’,
+ ‘Home Alone 3 (1997)’]
+```
+Accounting for all latent factors, these are the movies that people liked a lot less than they expected they would.
+
+Similarly, the top five movies by bias can be displayed:
+```python
+idxs = movie_bias.argsort(descending = True)[:5]
+[dls.classes[‘title’][i] for i in dixs]
+```
+This gives
+```
+[‘L.A. Confidential  (1997)’,
+ ‘Titanic (1997)’,
+ ‘Silence of the Lambs, The (1991)’,
+ ‘Shawshank Redemption (1994)’,
+ ‘Star Wars (1977)’]
+```
+Accounting for all latent factors, these are the movies that people liked a lot more than they expected they would.
+
+In addition to visualizing and interpreting the biases, the factors can be displayed for interpretation using the `.pca()` method for principle components analysis:
+```python
+g = ratings.groupby(‘title’)[‘rating’].count()
+top_movies = g.sort_values(ascending = False).index.values[:1000]
+top_idx = tensor([learn.dls.classes[‘title’].o2i[m] for m in top_movies])
+movie_w = learn.model.movie_factors[top_idxs].cpu().detach()
+movie_pca = movie_w.pca(3)
+fac0, fac1, fac2 = movie_pca.t()
+idxs = np.random.hoice(len(top_movies), 50, replace = False)
+idxs = list(range(50))
+X = fac0[idxs]
+Y = fac2[idxs]
+plt.figure(figuresize = (12, 12))
+plt.scatter(X, Y)
+for i, x, y in zip(top_movies[idxs], X, Y):
+	plt.text(x, y, i, colour = np.random.rand(3)*0.7, forntsize = 11)
+plt.show()
+```
+Looking at the resulting plot, it is obvious that the movies are spaced out across a space of varying latent factors according to genre.
+
+ #### *fastai* Library Funcions and Methods (`fastai.collab`)
+
+*fastai* has built-in methods and functions to creat and train collaborative learning models. They are simple and easy to use:
+```python
+learn = collab_learrner(dls, n_factors = 50, y_range = (0, 5.5))
+learn.fit_one_cycle(5, 5e-3, wd = 0.1)
+```
+
+The names of the layers of the model can be printed:
+```python
+learn.model
+```
+```
+EmbeddingDotBias(
+	(u_weight): Embedding(944, 50)
+	(i_weight): Embedding(1635, 50)
+	(u_bias): Embedding(944, 1)
+	(i_bias): Embedding(1635, 1)
+```
+
+The same collaborative filtering that was previously used can be used for this model generated with the *fastai* library.
+
+#### Embedding Distance and Cosine Similarity
+
+Embedding distance is the distance between one movie and all other movies. Cosine similarity is the angle between two movies. Both are useful metrics for analysing the data (in this case comparing movies):
+```python
+movie_factors = learn.model.i_weight.weight
+idx = dls.classes[‘title’].02i[‘Silence of the Lambs, The (1991)’]
+distances = nn.CosineSimilarity(dim = 1)(movie_factors, movie_factors[idx][none])
+idx = distances.argsort(descending = True)[1]
+dls.classes[‘title’][idx]
+```
+This gives
+```
+'Dial M for Murder (1954)'
+```
+
+#### Alternate Methods for Collaborative Filtering
+
+Methods, besides the dot product, exist for collaborative filtering:
+```python
+class CollabNN(Module):
+	def __init__(self, user_sz, item_sz, y_range = (0, 5.5), n_act = 100):
+		self.user_factors = Embedding(*user_sz)
+		self.item_factors = Embedding(*item_sz)
+		self.layers = nn.Sequential(user_sz[1] + item_sz[1], n_act), nn.ReLU(), nn.Linear(n_act, 1))
+		self.y_range = y_range
+
+	def forward(self, x):
+		embs = self.user_factors(x[:,0]), se;f.item_factors(x[:, 1])
+		x = self.layers(torch.cat(embs, dim = 1))
+		return sigmoid_range(x, *self.y_range)
+```
+
+This method is similar because there is a set of user and item factors that are looked up and multiplied to generate a compatibility score. However, instead of computing a dot product, they are concatenated so that they are next to one another, and then they are passed through a small neural network. 
+
+In the first linear layer, the number of inputs is equal to `user_sz[1] + item_sz[1]`, and the number of outputs is equal to `n_act`. A non-linear, rectified linear unit layer is applied, and the final linear layer takes `n_act` inputs and outputs one prediction.
+
+The `CollabNN` class used to create a model, and `Learner` is used to train it:
+```python
+model = CollabNN(dls, model, loss_func = MSELossFlat())
+
+learn = Learner(dls, model, loss_func = MSELossFlat())
+learn.fit_one_cycle(5, 5e-3, wd = 0.01)
+```
+
+One benefit of this method is that a different embedding size can be used for each instance where it is used. This could not be done with the dot product method. 
+```python
+embs = get_embs_sz(lds)
+embs
+```
+If `get_emb_sz` is called and a `DataLoaders`, `dls`, is passed in, an appropriate embedding matrix size will be suggested and used. 
+
+This can be implemented to create a model:
+```python
+model = CollabNN(*embs)
+
+learn = Learner(dls, model, loss_func = MSELossFlat())
+learn.fit_one_cycle(5, 5e-3, wd = 0.01)
+```
+By passing in `embs` with the astriks prefix,  the `user_sz`, `item_sz` attributes that are used in `Embedding`.
+
+Comparing these two architectures, it is not immediately evident which will perform better. 
+
+The first alternate collaborative learning architecture:
+```python
+learn = Learner(dls, model, loss_func = MSELossFlat())
+learn.fit_one_cycle(5, 5e-3, wd = 0.1)
+```
+
+The second alternate collaborative learning architecture: (This is the one with concatenation and linear layers.)
+```python
+learn = collab_learner(dls, use_nn = True, y_range = (0, 5.5), layers = [100, 50])
+learn.fit_one_cycle(5, 5e-3, wd = 0.1)
+```
+
+`collab_learner` returns an object of type `EmbeddingNN`:
+```python
+@delegates(TabularModel)
+class EmbeddingNN(TabularModel):
+	def __init__(self, emb_szs, layers, **kwargs):
+		super().__init__(emb_szs, layers = layers, n_cont = 0, out_sz = 1, **kwargs)
+```
+
+### 2.8 Tabular Statistical Models: Random Trees to Collaborative Filtering (*Kaggle Bulldozer Tabular Data Example*) <a class="anchor" id="#section_2_8"></a>
+
+The general applications of `Embeddings` for any type of categorical modelling are studied. Because `Embedding`s just index into an array, they can be used for any discrete categorical data. The number of discrete levels of a variable gas is called its cardinality.
+
+The Rossman sales competition run on Kaggle is studied as an example:
+
+“Competitors were given a wide range of information about various stores in Germany, and tasked with trying to predict sales on a number of days.”
+
+One of the gold medalists used a tabular deep-learning model. All contestants that used deep learning, used far less feature engineering and far less domain expertise. A paper titled *Entity Embeddings for Categorical Variables* was written on this. The article describes the process of embedding by concatenating one-hot encoded vectors and processing them through a neural network. Results are analyzed by plotting cities on a latent value plane. Cities that were proximate on this plane were geographically proximate as well. A very strong correlation between embedding-space and geographical distance was noticed, even though no geographical data was used to train the model. Similar phenomena were noticed for days of the week and months of the year, where elements that are next to each other appeared next to each other in the embedding space.
+
+Embedding is powerful in capturing accurate information about the world through machine learning. 
+
+Google's recommended method for Google Play, described in *Wide & Deep Learning for Recommender Systems* uses a similar method.
+
+Embedding can be expanded to apply to systems with an arbitrary number of categorical and continuous variables.  A tabular data substitute for deep learning is an “ensemble of decision trees” (i.e. Random Forests and Gradient Boosting Machines). Although deep learning is often superior, particularly for images, audio, text, both approaches yield similar results for tabular data.
+
+#### Ensembles of Decision Trees
+
+Decision tree ensembles currently provide faster and easiest ways of interpreting a model. They also require less hyper-parameter tuning and thus yield good results earlier.
+
+This approach generally does not perform well if very-high-cardinality categorical or neural-network-suited data (such as plain text, audio, or visual) is included.
+
+*PyTorch* is not the best Python library to use for decision tree ensembles since it is designed for gradient-based methods. So, scikit-learn `sklearn` is used instead. The book, *Python for Data Analysis* is a useful resource for this library.
+
+Consider the *Blue Book for Bulldozers* dataset from one of the Kaggle competitions.
+
+ To download a Kaggle dataset, the following procedure must be followed:
+
+{% include alert.html text="Add a note about the download procedure for Kaggle competition datasets here." %}
+
+The main CSV in this database is `train.csv`. It includes in rows for each sale, 
+* `SalesID`: a unique identifier for the sale
+* `MachineID`: a unique identifier for a machine (which can be sold multiple times).
+* `saleprice`: what the machine sold for at auction.
+*` saledate`: the date of the sale.
+
+Pandas can be used to read into the CSV and look at the columns:
+```python
+df = pd.read_csv(path/‘TrainAndValid.csv’, low_memory = False)
+df.columns
+```
+
+Since the columns are difficult to interpret, the model will be used for data-understanding and -cleanup.
+
+Ordinal columns are those that contain discrete elements that have some natural order such as “small”, “medium”, or “large”.
+
+By looking at the documentation for the dataset, the dependent variable can be found. It is the logarithm of `SalePrice`:
+```python
+dep_var = ‘SalePrice’
+df[dep_var] = np.log(df[dep_var])
+```
+
+A decision-tree ensemble requires decision trees, which consist of layers of binary questions. For this example the questions and order of the questions required to predict sales price is unknown. The procedure of determining this is relatively simple:
+1. “ Loop through each column of the dataset in turn
+2. For each column, loop through each possible level of that column in turn
+3. Try splitting the data into two groups, based on whether they are greater than or less than that value (or if it is a categorical variable, based on whether they are equal to or not equal to that level of the categorical variable)
+4. FInd the average sales price for each of those two groups, and see how close that is to the actual sales price of each of the items of equipment in that group, That is, treat this as a very simple “model” where our predictions are simply the average sales price of the item’s group
+5. After looping through all of the columns and possible levels for each, ... the plot point which gave the best predictions using [the] very simple model.
+6. [now there are] two different groups for [the] data, based on this selected split. Treat each of these as separate datasets, and find the best split for each, by going back to step one for each group
+7. Continue this process recursively, … until [some stopping criteria for each group has been reached]—for instance, stop splitting a group further when it has only 20 items in it.”
+
+Essentially, the error rate is used to find the best splitting criteria for each binary decision. 
+
+Before the decision tree can be created, a few data-procession features must be configured:
+```python
+df = add_datepart(df, ‘salesdate’)
+	
+df_test = pd.read_csv(path/‘Test.csv’, low_memory = False)
+df_test = add_datepart(df_test, ‘salesdate)
+```
+
+This adds a lot of date-related columns to the dataset, which can be seen by calling the following line of code:
+```python
+‘ ‘.join(0 for o in df.columns if o.startswith(‘sale’))
+```
+
+This is a good example of “feature engineering” where lots of potentially helpful data is created for each data point.
+
+#### TabularPandas and TabularProc
+
+The `TabularPandas` class is useful in data cleaning because it allows a Pandas dataset to be created with the provided CSV. Two tabular processors (`TabularProcs`) are used to transform the data. This is a powerful method because it transforms the data in place and does it all at once instead of every time the data is accessed.
+
+`Categorify` replaces a column with a numeric categorical column. `FillMissing` is a `TabularProc` that fills in missing data with the median and appends a new boolean column which is set to true if there was data missing. 
+
+For the Kaggel dataset, the validation set should be the last couple of weeks of data, because the model will be expected to project forward into the future:
+```python
+cond = df.saleYear < 2011) | (df.saleMonth < 10)
+train _idx = np. where(cond)[0]
+valid_idx = np.where(~cond)[0]
+
+splits = (list(train_idx), list(valid_idx))
+``` 
+
+When pasing parameters into a `TabularPandas`, a datframe (`df`), tabular procs, and specification about categorical and continuous variables, the dependant variable, and how to split the dataset is required:
+```python
+cont, cat = cont_cat_split(df, 1, dep_var = dep_var)
+to = TabularPandas(df, procs, cat, cont, y_names = dep_var, splits = splits
+```
+
+`TabularPandas` behave like *fastai* `Datasets` including the allocation of `.train()` and `.valid()` attributes. The first three rows of the data block can be seen using the following lines of code:
+```python
+to1 = TabularPandas(df, procs, [‘state’, ‘ProductGroup’, ‘Drive_System’, ‘Enclosure’], [], y_names = dep_var, splits = splits)
+to1.show(3)
+```
+
+This will return a table populated with labels for categorical data. The analogous numerical values, used during computation can be shown by calling the `.items()` method:
+```python
+to.items.head(3)
+to1.items[[‘state’, ‘ProductGroup’, ‘Drive_System’, ‘Enclosure’]].head(3)
+```
+
+The data is now organized in a format from which it can be used to train.
+
+The labels assigned to the values in a column of categorical data can be displayed with the `.classes()` method:
+```python
+to.classes[‘ProductSize’]
+```
+This gives, for the current example,
+```
+(#7)[‘#na#’, ‘Large’, ‘Large / Medium’, ‘Medium’, ‘Small’, ‘Mini’, ‘Compact’]
+```
+
+Since tabular data procession takes time, it should periodically be saved using the `.save()` method:
+```python
+(path/’to.pkl’).save(to)
+```
+
+This version of the decisiontree ensemble model can then be retrieved with the `.load()` method:
+```python
+to = (path/‘to.pkl’).load()
+```
+
+The independent and dependant variables are separated:
+```python
+xs, y = to.train.xs, to.train.y
+valid_xs, valid_y = to.valid.xs, to.valid.y
+```
+
+Now that all missing data has been filled in and categoric variables have been made numeric, and the independent and dependent variables have been separated, a decision tree can be constructed:
+
+A decision tree where the dependant variable is continuous is called a “decsion tree regressor”.
+```python
+m = DecisionTreeRegressor(max_leaf_nodes = 4)
+m.fit(xs, y)
+```
+
+The tree, in its its current state can be displayed with `draw_tree`:
+```python
+draw_tree(m, xs, size = 7, leaves_parallel = True, precision = 2)
+```
+	
+For each node, the following data is displayed:
+* Label, Logic Argument
+* Mean Squared Error
+* Number of Samples 
+* Value of the Dependent Variable
+
+Notice that for each progressive binary decision, the mean squared error progressively decreases. 
+
+Another way to visualize the data is using the *dtreeviz* library:
+```
+samp_idx = np.ranom.permutation(len(y))[:500]
+dtreeviz(m, xs.iloc[samp_idx], y.iloc[samp_idx], xs.columns, dep_var, fontname = ‘DejaVu Sans’, scale = 1.6, label_fotsize = 10, orientation = ‘LR’)
+````
+ Using this method of data visualization can reveal some errors such as many of the bulldozers having 1000 as the year they were made. This most likely occurred when missing data was being filled in.
+
+Now, a larger decision tree, where no stopping criteria is specified, is built:
+```python
+m = DecisionTreeRegressor()
+m.fit(xs, y);	
+```
+
+The following functions are used to assess the final root mean square error value:
+```python
+def r_mse(pred, y): return round(math.sqrt(((pred - y)**2).mean()), 6)
+def m_rmse(m, xs, y): return r_mse(m.predict(xs), y)
+```
+This gives
+```
+0.0
+```
+
+The validation must be checked. A value of `0.3377` reveals that the model has been overfit.
+
+Further investigation can be done by printing the number of leaf-nodes and datapoints:
+```python
+m.get_n_leaves(), len(xs)
+```
+This reveals that there are nearly as many leaf nodes as data points.
+
+Different stopping criteria should be used to avoid this issue. One would be to stop splitting if a leaf node has 25 items or less with the criteria `min_samples_leaf = 25`:
+```python
+m = DecisionTreeRegressor(min_samples_leaf = 25)
+m.fit(to.train.xs, to.train.y)
+m_rmse(m, xs, y), m(rmse(m, valid_xs, valid_y)
+```
+
+This has reduced the number of leaf nodes and improved accuracy in the validation set. 
+
+##### Working with Categorical Variables
+
+The approach to handling categorical variables to this point has been to transform them into numerical values. Binary decisions are made with logic conditions based on these numbers; however, the order of the numbers assigned may not correspond with the order of the categories if there even is one. In general, categories that are next to each other should have corresponding numerical values that are next to each other. For example, it would be useful if  “small”, “medium”, “large” corresponded with 1, 2, 3. So that a numerical inequality for a binary split makes sense for the categories as well. 
+
+Missing ordinal values will be assigned zero when data is filled in.
+
+#### Bagging for Random Forests
+
+Retired Berkeley professor, Leo Breiman, developed the method of “Bagging Predictors” as a way of improving random forests in 1994. The method involves training the models on random subsets of the data called “bootstrap replicas”, and taking the average of predictions for each of these models to form a more accurate final prediction.
+
+The proposed procedure is as follows:
+1. “Randomly choose a subject of the rows of [the] data (i.e. “bootstrap replicas of [the] learning set”)
+2. Train a model using this subject.
+3. Save that model, and then return to step one for a few times
+4. This will give ... a number of trained models. To make a prediction, predict using all the models, and then take the average of each of the model’s predictions.”
+
+The accuracy of almost any algorithm can be improved with bagging.
+
+In 2001, Breiman adapted his approach to decision trees specifically by randomly;y choosing a subset of rows and columns for each split in a decision tree. This approach may be the most widely used and most practical approach to tabular machine learning.
+
+#### Creating a Random Forest Regressor
+
+A random forest regressor can be constructed and fitted in the following way:
+```python
+def rf(xs, y, n_estimators = 40, max_samples = 200_000, max_features = 0.5, min_samples_leafs = 5, **kwargs):
+	return RandomForestRegressor(n_jobs = -1, n_estimators = n_estimators, max_samples = max_samples, max_features = max_features, min_samples_leaf = min_samples_leaf, oob_score = True).fit(xs, y)
+
+m = rf(xs, y)
+
+m_rmse(m, xs, y), m_rmse(m, valid_xs, valid_y)
+```
+
+This method is very effective.
+
+The *sklearn* documentation includes information about how the number of estimators impacts the accuracy. In general, accuracy increases as trees are added. 
+
+To see the affect of `n_estimators` in practice, the `estimators_` attribute can be used:
+```python
+preds = np.stack([t.predict(valid_xs) for t in m.estimators_])
+```
+
+This returns a *numpy* array with the predictions from each individual tree, which can then be averaged across the `0` axis to get a final prediction. 
+```python
+r_mse(preds.mean(0), valid_y)
+```
+Another way of interpreting this data is plotting the accuracy agains the number of tress in the model:
+```python
+plt.plot([r_mse(preds[:i+1].mean(0), valid_y) for i in range(40)]);
+```
+
+Continuous improvement is noticeable, but the improvements slowed down. 
+
+#### Out-of-Bag Error
+
+“Out-of-bag error”, among other things, can be used to understand whether issues in training arise as a result of overfitting or inconsistencies between training and validation sets. Library functions are included to compute it:
+```python
+r_mse(m.oob_prediciton_, y)
+```
+
+Out-of-bag error ensures that predictions for each tree is computed with a subset of the data that was not used to train it. It is similar to generating predictions with a validation dataset, but there is no time offset. Data that was not included in training is used but it is selected randomly, independent of time.
+
+#### Model Interpretation
+
+Model interpretation is particularly important for tabular data. Howard and Gugger point out several considerations for tabular data:
+* How confidence-inspiring are the predictions from a particular row of data?
+* How do various factors influence predictions for a particular row?
+* What is the predictive power of each column?
+* Which columns are highly influential in forming predictions? Which are redundant?
+* How do predictions vary with columns?
+
+```python
+import warnings
+warnings.simplifier(‘ignore’, FutureWarning)
+
+from treeinterpreter import treeinterpreter
+from waterfall_chart import plot as waterfall
+```
+
+Some predictions are made, and stacked into a *numpy* array:
+```python
+preds = np.stack([t.predict(valid_xs) for t in m.estimators_])
+preds.shape
+```
+
+The **standard deviation** of the predictions in the `preds` array indicates how much they carried:
+```python
+preds_std = preds.std(0)
+```
+Analyzing the standard deviations can flag issues if one stands out from the others. 
+
+**Feature importance** ranks the features in terms of which are most influential in the decision tree:
+```python
+fi = rf_feat_importance(m, xs)
+```
+They can also be plotted:
+```python
+def plot_fi(fi):
+	return fi.plot(‘cols’, ‘imp’, ‘barh’, figsize = (12, 7), lengend = False)
+
+plot_fi(fi[:30])
+```
+This is done by the `.feature_imporance_` from *sklearn*. An algorithm works its way down the tree, tracking what criteria were used for the split and how much the model improved. The result is an indication of which parameters are critical in the model and which could potentially be removed:
+```python
+to_keep = fi[fi.imp > 0.005]
+len(to_keep)
+
+xs_imp = xs[to_keep]
+valid_xs_imp = valid_xs[to_keep]
+
+m = rf(xa_imp, y)
+```
+Even after some columns (the less significant ones) are removed, the accuracy of the model remains quite good. 
+
+Further **redundant features** can be removed. 
+
+Call *fastai*’s `cluster_columns`:
+```python
+cluster_columns(xs_imp)
+```
+
+This feature helps identify pairs or groups of columns that are similar. For these groupings, when one categorical variable is high, so are the others and vice-versa. Some of them could be removed.
+
+The baseline error before removing any of them is generated by the following line:
+```python
+get_oob(xs_imp)
+```
+
+Now the errors are recorded as variables are removed, one-by-one:
+```python
+{c:get_oob(xs_imp.drop(c, axis = 1)) for c in (‘saleYear’, ‘saleElapsed’, ‘ProductGroupDesc’, ‘findModelDesc’, ‘fiBaseModel’, ‘Hydraulics_Flow’, ‘Grouser_Tracks’, ‘Coupler_Systems’)]
+```
+
+No significant decrease in accuracy is observed as these columns are removed. 
+
+**Partial dependancies** between columns may become evident through looking at the histogram for a particular column:
+```python
+p = valid_xs_final[‘ProductSize’].value_counts(sort = False).plot.barh()
+c = to.classes[‘ProductSize’]
+plt.yticks(range(len(c)), c);
+```
+This will show the number of items with the various labels for that columns.
+
+For `YearMade`, an actual histogram is required:
+```python
+ax = valid_xs_final[‘YearMade’].hist()
+```
+
+A partial-dependence plot will show the correlation between the dependant variable and a categorical independent variable:
+```python
+from sklearn.inspection import plot_partial_dependance 
+
+fig, ax = plt.subplots(fisize = (12, 4))
+plot_partial_dependance(m, valid_xs_final, [‘YearmMade’, ‘ProductSize’], grid_resolution = 20, ax = ax);
+```
+
+Note that in general, a dependent variable cannot be plotted against an independent variable, because there are several other independent variables that influence it. However, this approach attempts to plot the influence of just one column on the dependent variable by calculating the average dependent variable for all scenarios if the independent variable were a constant. This is done recursively for all levels of the independent categorical variable. This isolates the effect of the studied independent variable. 
+
+Some issues can arise if some of the data for a given column was not labelled. 
+
+For further interpretation and improvement, the **tree interpreter** libraries are used. First, they must be installed: 
+```python
+import warnings
+warnings.simplifier(‘ignore’, FutureWarning)
+
+from treeinterpreter import treeinterpreter
+from waterfall_chart import plot as waterfall
+```
+```
+!pip install treeinterpreter
+!pip install waterfallcharts
+```
+
+The `treeintepreter` module works by passing in a single row to compute whether the predicted dependant variable increases or decreases with each binary decision. The total importance by a split variable can then be added up:
+```python
+prediction[0], bias[0], contributions[0].sum()
+```
+Gives
+```
+(array([9.98234598]), 10.104309759725059, -0.12196378442186026)
+```
+
+Plotting these results:
+```python
+waterfall(valid_xs_final.columns, contributions[0], threshold = 0.08, roation_value = 45, formatting = ‘{:, 3f}’);
+```
+
+This plot will show the impact that each variable has on the dependent variable. It will also show the net effect.
+
+#### Extrapolation and Neural Networks
+
+Begin by creating some synthetic data:
+```python
+np.random.seed(42)
+	
+x_lin = torch.linspace(0, 20, steps = 40)
+y_lin = x_lin + torch.randn_like(x_lin)
+plt.scatter(x_lin, y_lin);
+```
+
+A random forest will be used to predict this normally-distributed random data. The horizontal vector is made vertical with the `.unsqueeze()` method:
+```python
+xs_lin = x_lin.unsqueeze(1)
+x_lin.shape, xs_lin.shape
+```
+An alternate method to achieving this transformation is using `x_lin[:, None].shape`, which places the unit axis where `None` is. 
+
+Now that the data is formatted in the necessary way, random forest can be constructed using the first 30 rows:
+```python
+m_lin = RandomForestRegressor().fit(xs_lin[:30],y_lin[:30])
+```
+
+The predictions can be plotted on the same plane as the origitonal data:
+```python
+plt.scatter(x_lin, y_lin, 20)
+plt.scatter(x_lin, m_lin.predict(xs_lin), color = ‘red’, alpha = 0.5);
+```
+
+A flattening of the data for high independent variables is noticeable. Because the data higher than the flat-line value did not appear in the training set. This is a demonstration of the model's poor ability to extrapolate outside the data it has seen. Finding out-of-domain data is an important feature of a model, though.
+
+The sources of the differences between the training and validation training sets can be identified using the following implementation of `rf_feat_importance`:
+```python
+df_dom = pd.concat([xs_final, valid_xs_final])
+is_valid = np.array([0]*len(xs_final) + [1]*len(valid_xs_final))
+
+m = rf(df_dom, is_valid)
+rf_feat_importance(m, df_dom)[:6]
+```
+
+These lines of code detect the predictive power of the model and identify which columns caused the differences between the training and validation datasets.
+
+The columns (at the top of the list) that are very different between the training and validation datasets can be removed to see if the model’s predictive power to extrapolate outside of the training data is increased:
+```python
+m = rf(xs_final, y)
+print(‘orig’, m_rmse(m, valid_xs_final, valid_y))
+
+for c in (‘SalesID’, ‘saleElapsed’, ‘MachineID’):
+	m = rf(xs_final.drop(c, axis = 1), y)
+	print(c, m_rmse(m, vlaid_xs_final.drop(c, axis = 1), valid_y))
+```
+
+Analyzing the model in this way reveals that the leading two columns that account for differences between the training and validation datasets can be removed and the predictive power of the model will increase. This will increase the model’s resilience over time because time dependencies between the training and validation datasets are being removed.
+
+#### Using a Neural Network
+
+Issues with extrapolation do not occur in neural networks:
+```python
+df_nn = pd.read_csv(path/’TrainAndValid.csv’, low_memory = False)
+df_nn[‘ProductSize’] = df_nn[‘ProductSize’].astype(‘catagory’)
+df_nn[‘ProductSize’].cat.set_categories(sizes, ordered = True, inplace = True)
+df_nn = add_datepart(df_nn, ‘saledate’)
+```
+
+The same datafame that was preciously used is used again:
+```python
+df_nn_final = df_nn[list(xs_final)time.columns) + [dep_car]]
+```
+
+For categorical columns, embeddings will be used:
+```python
+cont_nn, cat_nn = cont_cat_split(df_nn_final, max_card = 9000, dep_var = dep_var)
+```
+A maximum cardinality (maximum amount of discrete levels), `max_card`, is specified above which the categorical variable is treated as a continuous variable. 
+
+All variables that will be extrapolated are defined as continuous:
+```python
+cont_nn.append(‘sakeElapsed’)
+cat_nn.remove(‘saleElapsed’)
+```
+
+The number of uniqu, discrete levels for each categorical variable can be seen using the `.unique()` method:
+```python
+df_nn_fina[cat_nn].unique()
+```
+Caution should be used for variables with many discrete levels, because each level will add a row to the embedding matrix. Removing these categorical variables with many discrete levels does not compromise the model’s accuracy significantly; removing one of a set of two variables with similar numbers of discrete levels actually improves the models’ accuracy:
+```python
+xs_filt2 = xs_filt.drop(‘fiModeDescriptor’, axis = 1)
+valid_xs_time2 = valid_xs_time.drop(‘fiModelDescriptor’, axis = 1)
+m2 = rf(xs_filt2, y_filt)
+m_rmse(m, xs_filt2, y_filt), m_rmse(m2, valid_xs_time2, valid_y)
+```
+Since the impact is minimal, `fiModelDescriptor` can be removed from the model altogether.
+```python
+cat_nn.remove(fiModelDescriptor’)
+```
+
+A `TabularPandas` object can be created with `Normalize` to make the scale of all variables similar:
+```python
+procs_nn = [Categotify, FillMissing, Normalize]
+to_nn = TabularPandas(df_nn_final, procs_nn, cat_nn, cont_nn, splits = splits, y_names = dep_var)
+```
+
+With a `TabularPandas` object, a `dataloaders` with a batch size of `1024` can be created. A large batch size is chosen because tabular data takes up far less memory than images do. 
+```python
+dls = to_nn.dataloaders(1024)
+```
+
+Since the model is performing regression on a continuous dependant variable, a range for the dependant variable is defined:
+```python
+y = to_nn.train.y
+y.min(), y.max()
+```
+
+All parameters are now defined and a tabular model can be created. By default, *fastai* creates a neural network with two hidden layers with 500 and 250 (200 and 100 by default) activation respectively for tabular data:
+```python
+from fastai2.tabular.all import *
+
+learn = tabular_learner(dls, y_range = (8, 12), layers = [500, 250], n_out = 1, loss_func = F.mse_loss)
+
+learn.lr_find()
+```
+
+There are no pre-trained models for this type of tabular data, so the model is trained with 1-cycle for a few epochs:
+```python
+learn.fit_one_cycle(5, 1e-2)
+```
+
+The random mean-squared error, `r_mse`, can be used to compare the results to the forest result achieved earlier:
+```python
+preds, targs = learn.get_preds()
+r_mse(preds, targs)
+```
+The neural network-based model already has a better result than the tuned random-forest-based one.
+
+#### Ensembling
+
+Both the random-forest approach and the neural-network approach have benefits and drawbacks. Ensembling can be a way of getting the “best of both worlds”. There are many ways to ensemble random-forest and neural-network tabular models, but the simplest (called “bagging” is to take the average of the final prediction of both:
+```python
+rf_reds = m.predict(valid_xs_time)
+ens_preds = (to_np(preds.squeeze()) + rf_preds) / 2
+
+r_mse(ens_preds, valid_y
+```
+Results are improved by this method.
+
+Another method of ensembling is called “boosting”, which is done by 
+* “train[ing] a small model which underfits [the] data,
+* calulat[ing] the predictions in the training set of this model,
+* subtract[ing] the predictions from the targets (these are called the “residuals”, and represent the error for each point in the training set),
+* [return] to step one, but instead of using the original targets, use the residuals as the targets for training,
+* continue doing until [some stopping criterion, such as a maximum number of trees, is reached] or [a deterioration in error is observed].”
+
+The predictions of each can be summed (since they are derived from residuals) to form a final prediction.
+
+Other, more complicated variants to this method of ensembling include *Gradient Boosting Machines* (GBMs) or *Gradient-Boosted Decision Trees* (GBDTs) using popular libraries like *XGBoost*. 
+
+What should be noted about bagged and boosted models is that there is no upper limit for fitting. As more trees are added, the model’s accuracy should continue to go up. Gradually the model will start to overfit more and more. Boosted methods require parameter turning. They are quite sensitive to hyper-parameters.
+
+#### Combining Embedding with Other Methods
+
+The entity embedding paper states: “the embeddings obtained from the trained neural network boost the performance of all tested machine learning methods considerably when used as the input features instead.”
+
+A summary of approaches for tabular modelling presented by Howard and Gugger:
+* “**Random forests** are the easiest to train, because they are extremely resilient to hyper-parameter choices, and require very little preprocessing. They are very fast to train and should not overfit, if [enough trees are used]. But, they can be less accurate, especially if extrapolation is required, such as prediction future periods.
+* **Gradient boosting machines**, in theory, is just as fast to train as random forests, but in practice [many different hyperparameters must be tried]. They can overfit. But they are often a bit more accurate than random forests. 
+* **Neural Networks** take the longest time to train, and require extra procession such as normalization.; this normalization needs to be used at inference time as well. They can provide great results, and extrapolate well, but only when [hyperparameters are treated carefully], and [care is taken to avoid overfitting].”
+
 ## 3. Data Ethics <a class="anchor" id="section_3"></a>
 
 Not only are machine learning models subject to the same limitations of many other statistical methods—the same ethical issues that apply to statistics apply to machine learning as well. 
